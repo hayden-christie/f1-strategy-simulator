@@ -177,15 +177,15 @@ export default function LapTimeChart({ results }: LapTimeChartProps) {
   };
 
   return (
-    <div className="bg-[#1a1a1a] p-4 rounded border border-[#2a2a2a]">
-      <div style={{ height: '300px', backgroundColor: '#0a0a0a', padding: '12px', borderRadius: '4px' }}>
+    <div className="bg-[#1f1f1f] p-5 rounded-lg border border-[#333333] shadow-xl">
+      <div style={{ height: '350px', backgroundColor: '#141414', padding: '16px', borderRadius: '8px', border: '1px solid #2a2a2a' }}>
         <Line data={chartData} options={options} />
       </div>
 
       {/* Tire degradation key */}
-      <div className="mt-3 pt-3 border-t border-[#2a2a2a]">
-        <p className="text-xs font-bold mb-1 text-[#14b8a6] uppercase tracking-wide">Tire Degradation Visualization</p>
-        <p className="text-xs text-[#999999] font-mono">
+      <div className="mt-4 pt-4 border-t-2 border-[#333333]">
+        <p className="text-xs font-extrabold mb-2 text-[#14b8a6] uppercase tracking-wider">Tire Degradation Visualization</p>
+        <p className="text-xs text-[#cccccc] font-mono leading-relaxed">
           Chart shows lap times increasing as tires degrade. Gaps indicate pit stops.
           Hover over data points for tire compound, age, and fuel load details.
         </p>

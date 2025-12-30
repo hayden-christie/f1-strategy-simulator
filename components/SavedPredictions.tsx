@@ -20,9 +20,9 @@ export default function SavedPredictions({
 }: SavedPredictionsProps) {
   if (predictions.length === 0) {
     return (
-      <div className="bg-[#1a1a1a] rounded border border-[#2a2a2a] p-3">
+      <div className="bg-[#1f1f1f] rounded border border-[#333333] p-3">
         <h2 className="text-sm font-bold mb-2 text-white uppercase tracking-wide">Saved Predictions</h2>
-        <div className="p-4 border-2 border-dashed border-[#2a2a2a] rounded text-center">
+        <div className="p-4 border-2 border-dashed border-[#333333] rounded text-center">
           <p className="text-sm text-[#666666] font-mono uppercase">No saved predictions yet</p>
           <p className="text-xs mt-1 text-[#444444]">Run simulations and click "Save Prediction" to track your predictions</p>
         </div>
@@ -39,7 +39,7 @@ export default function SavedPredictions({
   };
 
   return (
-    <div className="bg-[#1a1a1a] rounded border border-[#2a2a2a] p-3">
+    <div className="bg-[#1f1f1f] rounded border border-[#333333] p-3">
       <h2 className="text-sm font-bold mb-2 text-white uppercase tracking-wide">
         Saved Predictions ({predictions.length})
       </h2>
@@ -55,7 +55,7 @@ export default function SavedPredictions({
               className={`p-3 rounded border-2 cursor-pointer transition-all ${
                 isSelected
                   ? 'border-[#dc0000] bg-[#dc0000]/10 shadow-lg shadow-red-900/30'
-                  : 'border-[#2a2a2a] bg-[#0a0a0a] hover:border-[#444444] hover:bg-[#151515]'
+                  : 'border-[#333333] bg-[#141414] hover:border-[#444444] hover:bg-[#1a1a1a]'
               }`}
             >
               <div className="flex items-start justify-between">

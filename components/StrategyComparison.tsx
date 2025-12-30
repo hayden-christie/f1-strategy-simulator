@@ -138,16 +138,16 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
   };
 
   return (
-    <div className="bg-[#1a1a1a] rounded border border-[#2a2a2a] p-4">
+    <div className="bg-[#1f1f1f] rounded-lg border border-[#333333] p-5 shadow-xl">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-bold text-white uppercase tracking-wide">Strategy Comparison</h3>
+        <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">Strategy Comparison</h3>
         <div className="flex items-center gap-2 text-xs font-mono text-[#999999]">
-          <span>{sortedResults.length} {sortedResults.length === 1 ? 'STRATEGY' : 'STRATEGIES'}</span>
+          <span className="px-2 py-1 bg-[#1a1a1a] rounded border border-[#333333]">{sortedResults.length} {sortedResults.length === 1 ? 'STRATEGY' : 'STRATEGIES'}</span>
         </div>
       </div>
 
       {/* Grid Layout - responsive columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {sortedResults.map((result, index) => {
           const isWinner = result === winner;
           const timeDelta = result.totalRaceTime - winner.totalRaceTime;
@@ -159,14 +159,14 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
           return (
             <div
               key={index}
-              className={`rounded border-2 transition-all ${
+              className={`rounded-lg border-2 transition-all duration-300 hover:shadow-2xl ${
                 isWinner
-                  ? 'border-[#14b8a6] bg-[#14b8a6]/5 shadow-lg shadow-teal-900/30'
-                  : 'border-[#2a2a2a] bg-[#0a0a0a]'
+                  ? 'border-[#14b8a6] bg-gradient-to-b from-[#14b8a6]/10 to-[#14b8a6]/5 shadow-xl shadow-teal-900/40 hover:shadow-teal-900/60'
+                  : 'border-[#333333] bg-[#1a1a1a] shadow-lg hover:border-[#3a3a3a]'
               }`}
             >
               {/* Header with position and winner badge */}
-              <div className={`p-3 border-b-2 ${isWinner ? 'border-[#14b8a6]/20' : 'border-[#2a2a2a]'}`}>
+              <div className={`p-3 border-b-2 ${isWinner ? 'border-[#14b8a6]/20' : 'border-[#333333]'}`}>
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <div className={`w-8 h-8 rounded flex items-center justify-center font-bold text-sm ${
@@ -202,19 +202,19 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
 
               {/* Key Metrics Grid */}
               <div className="p-3 grid grid-cols-2 gap-2">
-                <div className="bg-[#151515] rounded p-2 border border-[#2a2a2a]">
+                <div className="bg-[#1a1a1a] rounded p-2 border border-[#333333]">
                   <div className="text-xs text-[#999999] uppercase font-bold mb-1">Pit Stops</div>
                   <div className="text-base font-bold text-white font-mono">{result.pitStops.length}</div>
                 </div>
-                <div className="bg-[#151515] rounded p-2 border border-[#2a2a2a]">
+                <div className="bg-[#1a1a1a] rounded p-2 border border-[#333333]">
                   <div className="text-xs text-[#999999] uppercase font-bold mb-1">Avg Lap</div>
                   <div className="text-base font-bold text-white font-mono truncate">{result.averageLapTime.toFixed(2)}s</div>
                 </div>
-                <div className="bg-[#151515] rounded p-2 border border-[#2a2a2a]">
+                <div className="bg-[#1a1a1a] rounded p-2 border border-[#333333]">
                   <div className="text-xs text-[#999999] uppercase font-bold mb-1">Fastest</div>
                   <div className="text-base font-bold text-[#14b8a6] font-mono truncate">{result.fastestLap.toFixed(2)}s</div>
                 </div>
-                <div className="bg-[#151515] rounded p-2 border border-[#2a2a2a]">
+                <div className="bg-[#1a1a1a] rounded p-2 border border-[#333333]">
                   <div className="text-xs text-[#999999] uppercase font-bold mb-1">Slowest</div>
                   <div className="text-base font-bold text-[#dc0000] font-mono truncate">{result.slowestLap.toFixed(2)}s</div>
                 </div>
@@ -222,7 +222,7 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
 
               {/* Tire Strategy */}
               <div className="px-3 pb-3">
-                <div className="bg-[#151515] rounded p-2 border border-[#2a2a2a]">
+                <div className="bg-[#1a1a1a] rounded p-2 border border-[#333333]">
                   <div className="text-xs text-[#999999] uppercase font-bold mb-2">Tire Strategy</div>
                   <div className="flex items-center gap-1 flex-wrap">
                     <div className="flex items-center gap-1">
@@ -268,7 +268,7 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
 
               {/* Stint Analysis */}
               {isStintsExpanded && (
-                <div className="px-3 pb-3 border-t border-[#2a2a2a] pt-3">
+                <div className="px-3 pb-3 border-t border-[#333333] pt-3">
                   <div className="flex items-center justify-between mb-2">
                     <div className="text-xs font-bold text-[#14b8a6] uppercase">Stint Breakdown</div>
                     <div className="text-xs text-[#666666] font-mono">Tire Degradation Analysis</div>
@@ -277,7 +277,7 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
                     {stints.map((stint) => (
                       <div
                         key={stint.number}
-                        className="px-2 py-2 bg-[#151515] border border-[#2a2a2a] rounded"
+                        className="px-2 py-2 bg-[#1a1a1a] border border-[#333333] rounded"
                       >
                         <div className="flex items-center justify-between mb-1.5">
                           <div className="flex items-center gap-2">
@@ -301,7 +301,7 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
                             </span>
                           </div>
                         </div>
-                        <div className="mt-1 pt-1 border-t border-[#2a2a2a]">
+                        <div className="mt-1 pt-1 border-t border-[#333333]">
                           <div className="flex justify-between text-xs font-mono">
                             <span className="text-[#666666]">DEG RATE (per lap):</span>
                             <span className={`font-bold ${stint.degradationRate > 0.05 ? 'text-[#dc0000]' : 'text-[#14b8a6]'}`}>
@@ -312,7 +312,7 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
                       </div>
                     ))}
                   </div>
-                  <div className="mt-2 p-2 bg-[#0a0a0a] rounded border border-[#2a2a2a]">
+                  <div className="mt-2 p-2 bg-[#141414] rounded border border-[#333333]">
                     <p className="text-xs text-[#999999] font-mono">
                       <span className="text-[#14b8a6] font-bold">DEG RATE</span> = Tire degradation per lap (time loss rate)
                     </p>
@@ -322,11 +322,11 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
 
               {/* Lap-by-Lap Times */}
               {isLapsExpanded && (
-                <div className="px-3 pb-3 border-t border-[#2a2a2a] pt-3">
+                <div className="px-3 pb-3 border-t border-[#333333] pt-3">
                   <div className="text-xs font-bold text-[#14b8a6] uppercase mb-2">Lap-by-Lap Times</div>
-                  <div className="max-h-64 overflow-y-auto border border-[#2a2a2a] rounded">
+                  <div className="max-h-64 overflow-y-auto border border-[#333333] rounded">
                     <table className="w-full text-xs font-mono">
-                      <thead className="sticky top-0 bg-[#151515] border-b border-[#2a2a2a]">
+                      <thead className="sticky top-0 bg-[#1a1a1a] border-b border-[#333333]">
                         <tr>
                           <th className="px-2 py-1 text-left text-[#999999] font-bold">LAP</th>
                           <th className="px-2 py-1 text-left text-[#999999] font-bold">TIRE</th>
@@ -338,7 +338,7 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
                         {result.laps.map((lap) => (
                           <tr
                             key={lap.lapNumber}
-                            className={`border-t border-[#2a2a2a] hover:bg-[#151515] ${
+                            className={`border-t border-[#333333] hover:bg-[#1a1a1a] ${
                               lap.isPitLap ? 'bg-[#dc0000]/10' : ''
                             }`}
                           >
@@ -376,13 +376,13 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
 
               {/* Pit Stop Details */}
               {isExpanded && result.pitStops.length > 0 && (
-                <div className="px-3 pb-3 border-t border-[#2a2a2a] pt-3">
+                <div className="px-3 pb-3 border-t border-[#333333] pt-3">
                   <div className="text-xs font-bold text-[#14b8a6] uppercase mb-2">Pit Stop Details</div>
                   <div className="space-y-1">
                     {result.pitStops.map((stop, i) => (
                       <div
                         key={i}
-                        className="flex items-center justify-between px-2 py-1.5 bg-[#151515] border border-[#2a2a2a] rounded text-xs font-mono"
+                        className="flex items-center justify-between px-2 py-1.5 bg-[#1a1a1a] border border-[#333333] rounded text-xs font-mono"
                       >
                         <div className="flex items-center gap-2">
                           <span className="text-[#999999]">STOP {i + 1}</span>
@@ -408,7 +408,7 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
 
       {/* Summary Analysis */}
       {results.length > 1 && (
-        <div className="mt-4 p-3 bg-[#151515] border-2 border-[#14b8a6] rounded">
+        <div className="mt-4 p-3 bg-[#1a1a1a] border-2 border-[#14b8a6] rounded">
           <div className="flex items-start gap-2">
             <div className="w-1 h-full bg-gradient-to-b from-[#14b8a6] to-[#0d9488] flex-shrink-0"></div>
             <div className="flex-1">

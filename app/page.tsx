@@ -224,7 +224,7 @@ export default function Home() {
 
   if (!seasonData) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <div className="min-h-screen bg-[#141414] flex items-center justify-center">
         <div className="text-center">
           <div className="text-xl font-bold text-white mb-3 uppercase tracking-wider">Loading F1 Data...</div>
           <div className="w-48 h-1 bg-[#2a2a2a] rounded-full overflow-hidden mx-auto">
@@ -237,17 +237,17 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-[#141414]">
       {/* Header */}
-      <header className="bg-[#151515] border-b border-[#2a2a2a] shadow-lg">
-        <div className="max-w-[1800px] mx-auto px-3 py-3">
+      <header className="bg-gradient-to-b from-[#1a1a1a] to-[#151515] border-b-2 border-[#333333] shadow-2xl">
+        <div className="max-w-[1800px] mx-auto px-3 py-4">
           <div className="flex items-center gap-3">
-            <div className="w-1 h-12 bg-gradient-to-b from-[#dc0000] to-[#e10600]"></div>
+            <div className="w-1.5 h-14 bg-gradient-to-b from-[#dc0000] via-[#e10600] to-[#dc0000] rounded-full shadow-lg shadow-red-900/50"></div>
             <div>
-              <h1 className="text-2xl font-bold text-white uppercase tracking-wider">
+              <h1 className="text-2xl font-extrabold text-white uppercase tracking-wider" style={{letterSpacing: '0.1em'}}>
                 F1 Strategy Simulator
               </h1>
-              <p className="text-[#14b8a6] text-sm font-mono tracking-wide">
+              <p className="text-[#14b8a6] text-sm font-mono tracking-wide font-semibold">
                 2025 SEASON // TELEMETRY & STRATEGY ANALYSIS
               </p>
             </div>
@@ -260,9 +260,9 @@ export default function Home() {
         {/* Full-Width Top Section: Input Controls */}
         <div className="space-y-3">
           {/* Row 1: Race Selection, Driver Selection, Mode Selection */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Race Selection */}
-            <div className="bg-[#1a1a1a] rounded border border-[#2a2a2a] p-3">
+            <div className="bg-[#1f1f1f] rounded-lg border border-[#333333] p-4 shadow-lg hover:shadow-xl hover:border-[#3a3a3a] transition-all duration-300">
               <h2 className="text-sm font-bold mb-2 text-white uppercase tracking-wide">Race Selection</h2>
               <RaceSelector
                 races={seasonData.races}
@@ -281,7 +281,7 @@ export default function Home() {
             </div>
 
             {/* Driver Selection */}
-            <div className="bg-[#1a1a1a] rounded border border-[#2a2a2a] p-3">
+            <div className="bg-[#1f1f1f] rounded-lg border border-[#333333] p-4 shadow-lg hover:shadow-xl hover:border-[#3a3a3a] transition-all duration-300">
               <h2 className="text-sm font-bold mb-2 text-white uppercase tracking-wide">Driver Selection</h2>
               <DriverSelector
                 selectedDriver={selectedDriver}
@@ -290,7 +290,7 @@ export default function Home() {
             </div>
 
             {/* Mode Selector */}
-            <div className="bg-[#1a1a1a] rounded border border-[#2a2a2a] p-3">
+            <div className="bg-[#1f1f1f] rounded-lg border border-[#333333] p-4 shadow-lg hover:shadow-xl hover:border-[#3a3a3a] transition-all duration-300">
               <h2 className="text-sm font-bold mb-2 text-white uppercase tracking-wide">Race Mode</h2>
               <ModeSelector
                 currentMode={raceMode}
@@ -321,13 +321,13 @@ export default function Home() {
 
           {/* Row 3: Strategy Builder (Full Width) */}
           {selectedRace && raceMode === 'PRE_RACE' && (
-            <div className="bg-[#1a1a1a] rounded border border-[#2a2a2a] p-3">
+            <div className="bg-[#1f1f1f] rounded-lg border border-[#333333] p-4 shadow-lg hover:shadow-xl hover:border-[#3a3a3a] transition-all duration-300">
               <div className="flex items-center justify-between mb-2">
                 <h2 className="text-sm font-bold text-white uppercase tracking-wide">Strategy Builder ({strategies.length}/3)</h2>
                 <button
                   onClick={addNewStrategy}
                   disabled={strategies.length >= 3}
-                  className="px-3 py-1 bg-[#14b8a6] text-black text-xs font-bold uppercase rounded hover:bg-[#0d9488] disabled:bg-[#333333] disabled:text-[#666666] transition-all hover:shadow-lg hover:shadow-teal-900/50"
+                  className="px-3 py-1 bg-gradient-to-r from-[#14b8a6] to-[#0f9d8e] text-black text-xs font-bold uppercase rounded-lg shadow-md shadow-teal-900/30 hover:shadow-lg hover:shadow-teal-900/50 hover:from-[#0d9488] hover:to-[#0c7f73] transition-all duration-300 hover:-translate-y-0.5 disabled:bg-[#333333] disabled:text-[#666666] transition-all hover:shadow-lg hover:shadow-teal-900/50"
                 >
                   + Add Strategy
                 </button>
@@ -343,7 +343,7 @@ export default function Home() {
                         className={`px-3 py-2 pr-8 border-2 border-b-0 text-xs font-bold uppercase tracking-wide transition-all ${
                           currentStrategyIndex === index
                             ? 'bg-[#dc0000] border-[#dc0000] text-white shadow-lg shadow-red-900/50'
-                            : 'bg-[#151515] border-[#2a2a2a] text-[#999999] hover:bg-[#1f1f1f] hover:border-[#444444]'
+                            : 'bg-[#151515] border-[#333333] text-[#999999] hover:bg-[#1f1f1f] hover:border-[#444444]'
                         }`}
                       >
                         {strategy.name}
@@ -366,7 +366,7 @@ export default function Home() {
               )}
 
               {strategies.length === 0 ? (
-                <div className="text-center py-4 border-2 border-dashed border-[#2a2a2a] rounded">
+                <div className="text-center py-4 border-2 border-dashed border-[#333333] rounded">
                   <p className="text-sm text-[#666666] font-mono">NO STRATEGIES LOADED</p>
                   <p className="text-xs mt-1 text-[#444444]">Click "Add Strategy" or "Load Optimal"</p>
                 </div>
@@ -397,7 +397,7 @@ export default function Home() {
               <button
                 onClick={runSimulation}
                 disabled={isSimulating}
-                className="px-8 py-3 bg-[#dc0000] text-white font-bold uppercase tracking-wide rounded hover:bg-[#e10600] transition-all hover:shadow-lg hover:shadow-red-900/50 disabled:bg-[#333333] disabled:text-[#666666] disabled:cursor-not-allowed disabled:shadow-none"
+                className="px-8 py-3 bg-gradient-to-r from-[#dc0000] to-[#c50000] text-white font-bold uppercase tracking-wide rounded-lg shadow-lg shadow-red-900/40 hover:shadow-xl hover:shadow-red-900/60 hover:from-[#e10600] hover:to-[#d00000] transition-all duration-300 hover:-translate-y-0.5 disabled:bg-[#333333] disabled:from-[#333333] disabled:to-[#333333] disabled:text-[#666666] disabled:cursor-not-allowed disabled:shadow-none disabled:transform-none"
               >
                 {isSimulating ? (
                   <span className="flex items-center justify-center gap-2">
@@ -430,7 +430,7 @@ export default function Home() {
               <button
                 onClick={handleClearSimulation}
                 disabled={isSimulating}
-                className="px-6 py-3 bg-transparent border-2 border-[#2a2a2a] text-[#999999] font-bold uppercase rounded hover:bg-[#1f1f1f] hover:border-[#444444] hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-6 py-3 bg-transparent border-2 border-[#333333] text-[#999999] font-bold uppercase rounded-lg hover:bg-[#1f1f1f] hover:border-[#3a3a3a] hover:text-white hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center gap-2"
                 title="Clear all strategies and results"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -453,9 +453,9 @@ export default function Home() {
 
           {/* Empty State Messages for LIVE and POST_RACE modes */}
           {raceMode === 'LIVE' && simulationResults.length === 0 && (
-            <div className="bg-[#1a1a1a] rounded border border-[#2a2a2a] p-3">
+            <div className="bg-[#1f1f1f] rounded-lg border border-[#333333] p-4 shadow-lg hover:shadow-xl hover:border-[#3a3a3a] transition-all duration-300">
               <h2 className="text-sm font-bold mb-3 text-white uppercase tracking-wide">Live Race Tracking</h2>
-              <div className="p-6 border-2 border-dashed border-[#2a2a2a] rounded text-center">
+              <div className="p-6 border-2 border-dashed border-[#333333] rounded text-center">
                 <div className="text-[#14b8a6] mb-3">
                   <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -473,9 +473,9 @@ export default function Home() {
           )}
 
           {raceMode === 'POST_RACE' && !selectedPrediction && (
-            <div className="bg-[#1a1a1a] rounded border border-[#2a2a2a] p-3">
+            <div className="bg-[#1f1f1f] rounded-lg border border-[#333333] p-4 shadow-lg hover:shadow-xl hover:border-[#3a3a3a] transition-all duration-300">
               <h2 className="text-sm font-bold mb-3 text-white uppercase tracking-wide">Post-Race Analysis</h2>
-              <div className="p-6 border-2 border-dashed border-[#2a2a2a] rounded text-center">
+              <div className="p-6 border-2 border-dashed border-[#333333] rounded text-center">
                 <div className="text-[#dc0000] mb-3">
                   <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -496,9 +496,9 @@ export default function Home() {
           )}
 
           {raceMode === 'POST_RACE' && selectedPrediction && selectedPrediction.raceName !== 'Bahrain Grand Prix' && (
-            <div className="bg-[#1a1a1a] rounded border border-[#2a2a2a] p-3">
+            <div className="bg-[#1f1f1f] rounded-lg border border-[#333333] p-4 shadow-lg hover:shadow-xl hover:border-[#3a3a3a] transition-all duration-300">
               <h2 className="text-sm font-bold mb-3 text-white uppercase tracking-wide">Post-Race Analysis</h2>
-              <div className="p-6 border-2 border-dashed border-[#2a2a2a] rounded text-center">
+              <div className="p-6 border-2 border-dashed border-[#333333] rounded text-center">
                 <div className="text-[#dc0000] mb-3">
                   <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -526,7 +526,7 @@ export default function Home() {
         {/* Visual Separator */}
         {simulationResults.length > 0 && (
           <div className="my-6 border-t-2 border-[#dc0000] relative">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#0a0a0a] px-4">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#141414] px-4">
               <span className="text-xs font-bold text-[#dc0000] uppercase tracking-wider">Simulation Results</span>
             </div>
           </div>
@@ -536,7 +536,7 @@ export default function Home() {
         {simulationResults.length > 0 && (
           <div className="mt-4 space-y-3">
             {/* Results Header with Save Buttons */}
-            <div className="bg-[#1a1a1a] rounded border border-[#2a2a2a] p-3">
+            <div className="bg-[#1f1f1f] rounded-lg border border-[#333333] p-4 shadow-lg hover:shadow-xl hover:border-[#3a3a3a] transition-all duration-300">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-sm font-bold text-white uppercase tracking-wide mb-1">Simulation Results</h2>
@@ -579,7 +579,7 @@ export default function Home() {
                 Compare up to 3 strategies side-by-side with lap-by-lap analysis. All lap counts based on official 2025 F1 race distances.
               </p>
               {useAdvancedFeatures && (
-                <div className="mt-2 pt-2 border-t border-[#2a2a2a]">
+                <div className="mt-2 pt-2 border-t border-[#333333]">
                   <h4 className="font-bold text-[#14b8a6] mb-1 text-xs uppercase tracking-wide">Advanced Features Active:</h4>
                   <ul className="text-xs text-[#999999] flex flex-wrap gap-x-3 gap-y-0.5 font-mono">
                     {advancedConfig.enhancedFuelEffect && <li>→ Enhanced fuel effect (~0.03-0.05s/kg)</li>}

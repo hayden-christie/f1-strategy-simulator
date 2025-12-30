@@ -117,7 +117,7 @@ export default function StrategyBuilder({
           type="text"
           value={strategyName}
           onChange={(e) => setStrategyName(e.target.value)}
-          className="w-full px-3 py-2 text-sm bg-[#0a0a0a] border border-[#2a2a2a] text-white rounded focus:ring-2 focus:ring-[#dc0000] focus:border-[#dc0000] font-mono"
+          className="w-full px-3 py-2 text-sm bg-[#141414] border border-[#333333] text-white rounded focus:ring-2 focus:ring-[#dc0000] focus:border-[#dc0000] font-mono"
           placeholder="ENTER STRATEGY NAME"
         />
       </div>
@@ -134,7 +134,7 @@ export default function StrategyBuilder({
               className={`flex-1 px-2 py-2 rounded border-2 transition-all text-xs ${
                 startingCompound === compound
                   ? 'border-[#dc0000] bg-[#dc0000] text-white shadow-lg shadow-red-900/50'
-                  : 'border-[#2a2a2a] bg-[#0a0a0a] hover:border-[#444444] text-[#999999]'
+                  : 'border-[#333333] bg-[#141414] hover:border-[#444444] text-[#999999]'
               }`}
             >
               <div className="flex items-center justify-center gap-1.5">
@@ -158,7 +158,7 @@ export default function StrategyBuilder({
         </div>
 
         {pitStops.length === 0 ? (
-          <div className="p-3 border-2 border-dashed border-[#2a2a2a] rounded text-center">
+          <div className="p-3 border-2 border-dashed border-[#333333] rounded text-center">
             <p className="text-xs text-[#666666] font-mono uppercase">No pit stops configured</p>
             <p className="text-xs text-[#444444] mt-1">Click "Add" to create strategy</p>
           </div>
@@ -169,7 +169,7 @@ export default function StrategyBuilder({
               .map((pitStop, index) => (
                 <div
                   key={pitStop.id}
-                  className="p-2 border border-[#2a2a2a] rounded bg-[#0a0a0a]"
+                  className="p-2 border border-[#333333] rounded bg-[#141414]"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-bold text-xs text-[#14b8a6] uppercase tracking-wide">Stop {index + 1}</span>
@@ -192,7 +192,7 @@ export default function StrategyBuilder({
                         onChange={(e) =>
                           updatePitStop(pitStop.id, 'lap', Number(e.target.value))
                         }
-                        className="w-full px-2 py-1.5 bg-[#151515] border border-[#2a2a2a] text-white rounded text-sm font-mono focus:ring-2 focus:ring-[#dc0000] focus:border-[#dc0000]"
+                        className="w-full px-2 py-1.5 bg-[#1a1a1a] border border-[#333333] text-white rounded text-sm font-mono focus:ring-2 focus:ring-[#dc0000] focus:border-[#dc0000]"
                       />
                     </div>
 
@@ -203,7 +203,7 @@ export default function StrategyBuilder({
                         onChange={(e) =>
                           updatePitStop(pitStop.id, 'tireCompound', e.target.value as TireCompound)
                         }
-                        className="w-full px-2 py-1.5 bg-[#151515] border border-[#2a2a2a] text-white rounded text-sm font-bold uppercase focus:ring-2 focus:ring-[#dc0000] focus:border-[#dc0000]"
+                        className="w-full px-2 py-1.5 bg-[#1a1a1a] border border-[#333333] text-white rounded text-sm font-bold uppercase focus:ring-2 focus:ring-[#dc0000] focus:border-[#dc0000]"
                       >
                         {tireCompounds.map((compound) => (
                           <option key={compound} value={compound}>
@@ -219,7 +219,7 @@ export default function StrategyBuilder({
         )}
       </div>
 
-      <div className="p-3 bg-[#151515] border-2 border-[#14b8a6] rounded">
+      <div className="p-3 bg-[#1a1a1a] border-2 border-[#14b8a6] rounded">
         <div className="flex items-start gap-2">
           <div className="w-1 h-full bg-gradient-to-b from-[#14b8a6] to-[#0d9488] flex-shrink-0"></div>
           <div className="flex-1">
@@ -238,7 +238,7 @@ export default function StrategyBuilder({
                 <span className="font-bold text-white">{pitStops.length}</span>
               </div>
               {pitStops.length > 0 && (
-                <div className="pt-2 border-t border-[#2a2a2a]">
+                <div className="pt-2 border-t border-[#333333]">
                   <p className="font-bold mb-2 text-[#14b8a6] uppercase text-xs">Stint Breakdown:</p>
                   {(() => {
                     const sortedStops = [...pitStops].sort((a, b) => a.lap - b.lap);
