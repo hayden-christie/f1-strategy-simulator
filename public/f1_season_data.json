@@ -1,0 +1,794 @@
+{
+  "year": 2025,
+  "races": [
+    {
+      "round": 0,
+      "name": "Pre-Season Testing",
+      "country": "Bahrain",
+      "location": "Sakhir",
+      "circuit": "Pre-Season Testing",
+      "date": "2025-02-28",
+      "format": "testing",
+      "sessions": {
+        "practice1": "2025-02-26 10:00:00",
+        "practice2": "2025-02-27 10:00:00",
+        "practice3": "2025-02-28 10:00:00"
+      }
+    },
+    {
+      "round": 1,
+      "name": "Australian Grand Prix",
+      "country": "Australia",
+      "location": "Melbourne",
+      "circuit": "Australian Grand Prix",
+      "date": "2025-03-16",
+      "format": "conventional",
+      "sessions": {
+        "practice1": "2025-03-14 12:30:00",
+        "practice2": "2025-03-14 16:00:00",
+        "practice3": "2025-03-15 12:30:00",
+        "qualifying": "2025-03-15 16:00:00",
+        "race": "2025-03-16 15:00:00"
+      }
+    },
+    {
+      "round": 2,
+      "name": "Chinese Grand Prix",
+      "country": "China",
+      "location": "Shanghai",
+      "circuit": "Chinese Grand Prix",
+      "date": "2025-03-23",
+      "format": "sprint_qualifying",
+      "sessions": {
+        "practice1": "2025-03-21 11:30:00",
+        "practice2": "2025-03-21 15:30:00",
+        "practice3": "2025-03-22 11:00:00",
+        "qualifying": "2025-03-22 15:00:00",
+        "race": "2025-03-23 15:00:00"
+      }
+    },
+    {
+      "round": 3,
+      "name": "Japanese Grand Prix",
+      "country": "Japan",
+      "location": "Suzuka",
+      "circuit": "Japanese Grand Prix",
+      "date": "2025-04-06",
+      "format": "conventional",
+      "sessions": {
+        "practice1": "2025-04-04 11:30:00",
+        "practice2": "2025-04-04 15:00:00",
+        "practice3": "2025-04-05 11:30:00",
+        "qualifying": "2025-04-05 15:00:00",
+        "race": "2025-04-06 14:00:00"
+      }
+    },
+    {
+      "round": 4,
+      "name": "Bahrain Grand Prix",
+      "country": "Bahrain",
+      "location": "Sakhir",
+      "circuit": "Bahrain Grand Prix",
+      "date": "2025-04-13",
+      "format": "conventional",
+      "sessions": {
+        "practice1": "2025-04-11 14:30:00",
+        "practice2": "2025-04-11 18:00:00",
+        "practice3": "2025-04-12 15:30:00",
+        "qualifying": "2025-04-12 19:00:00",
+        "race": "2025-04-13 18:00:00"
+      }
+    },
+    {
+      "round": 5,
+      "name": "Saudi Arabian Grand Prix",
+      "country": "Saudi Arabia",
+      "location": "Jeddah",
+      "circuit": "Saudi Arabian Grand Prix",
+      "date": "2025-04-20",
+      "format": "conventional",
+      "sessions": {
+        "practice1": "2025-04-18 16:30:00",
+        "practice2": "2025-04-18 20:00:00",
+        "practice3": "2025-04-19 16:30:00",
+        "qualifying": "2025-04-19 20:00:00",
+        "race": "2025-04-20 20:00:00"
+      }
+    },
+    {
+      "round": 6,
+      "name": "Miami Grand Prix",
+      "country": "United States",
+      "location": "Miami Gardens",
+      "circuit": "Miami Grand Prix",
+      "date": "2025-05-04",
+      "format": "sprint_qualifying",
+      "sessions": {
+        "practice1": "2025-05-02 12:30:00",
+        "practice2": "2025-05-02 16:30:00",
+        "practice3": "2025-05-03 12:00:00",
+        "qualifying": "2025-05-03 16:00:00",
+        "race": "2025-05-04 16:00:00"
+      }
+    },
+    {
+      "round": 7,
+      "name": "Emilia Romagna Grand Prix",
+      "country": "Italy",
+      "location": "Imola",
+      "circuit": "Emilia Romagna Grand Prix",
+      "date": "2025-05-18",
+      "format": "conventional",
+      "sessions": {
+        "practice1": "2025-05-16 13:30:00",
+        "practice2": "2025-05-16 17:00:00",
+        "practice3": "2025-05-17 12:30:00",
+        "qualifying": "2025-05-17 16:00:00",
+        "race": "2025-05-18 15:00:00"
+      }
+    },
+    {
+      "round": 8,
+      "name": "Monaco Grand Prix",
+      "country": "Monaco",
+      "location": "Monaco",
+      "circuit": "Monaco Grand Prix",
+      "date": "2025-05-25",
+      "format": "conventional",
+      "sessions": {
+        "practice1": "2025-05-23 13:30:00",
+        "practice2": "2025-05-23 17:00:00",
+        "practice3": "2025-05-24 12:30:00",
+        "qualifying": "2025-05-24 16:00:00",
+        "race": "2025-05-25 15:00:00"
+      }
+    },
+    {
+      "round": 9,
+      "name": "Spanish Grand Prix",
+      "country": "Spain",
+      "location": "Barcelona",
+      "circuit": "Spanish Grand Prix",
+      "date": "2025-06-01",
+      "format": "conventional",
+      "sessions": {
+        "practice1": "2025-05-30 13:30:00",
+        "practice2": "2025-05-30 17:00:00",
+        "practice3": "2025-05-31 12:30:00",
+        "qualifying": "2025-05-31 16:00:00",
+        "race": "2025-06-01 15:00:00"
+      }
+    },
+    {
+      "round": 10,
+      "name": "Canadian Grand Prix",
+      "country": "Canada",
+      "location": "Montréal",
+      "circuit": "Canadian Grand Prix",
+      "date": "2025-06-15",
+      "format": "conventional",
+      "sessions": {
+        "practice1": "2025-06-13 13:30:00",
+        "practice2": "2025-06-13 17:00:00",
+        "practice3": "2025-06-14 12:30:00",
+        "qualifying": "2025-06-14 16:00:00",
+        "race": "2025-06-15 14:00:00"
+      }
+    },
+    {
+      "round": 11,
+      "name": "Austrian Grand Prix",
+      "country": "Austria",
+      "location": "Spielberg",
+      "circuit": "Austrian Grand Prix",
+      "date": "2025-06-29",
+      "format": "conventional",
+      "sessions": {
+        "practice1": "2025-06-27 13:30:00",
+        "practice2": "2025-06-27 17:00:00",
+        "practice3": "2025-06-28 12:30:00",
+        "qualifying": "2025-06-28 16:00:00",
+        "race": "2025-06-29 15:00:00"
+      }
+    },
+    {
+      "round": 12,
+      "name": "British Grand Prix",
+      "country": "United Kingdom",
+      "location": "Silverstone",
+      "circuit": "British Grand Prix",
+      "date": "2025-07-06",
+      "format": "conventional",
+      "sessions": {
+        "practice1": "2025-07-04 12:30:00",
+        "practice2": "2025-07-04 16:00:00",
+        "practice3": "2025-07-05 11:30:00",
+        "qualifying": "2025-07-05 15:00:00",
+        "race": "2025-07-06 15:00:00"
+      }
+    },
+    {
+      "round": 13,
+      "name": "Belgian Grand Prix",
+      "country": "Belgium",
+      "location": "Spa-Francorchamps",
+      "circuit": "Belgian Grand Prix",
+      "date": "2025-07-27",
+      "format": "sprint_qualifying",
+      "sessions": {
+        "practice1": "2025-07-25 12:30:00",
+        "practice2": "2025-07-25 16:30:00",
+        "practice3": "2025-07-26 12:00:00",
+        "qualifying": "2025-07-26 16:00:00",
+        "race": "2025-07-27 15:00:00"
+      }
+    },
+    {
+      "round": 14,
+      "name": "Hungarian Grand Prix",
+      "country": "Hungary",
+      "location": "Budapest",
+      "circuit": "Hungarian Grand Prix",
+      "date": "2025-08-03",
+      "format": "conventional",
+      "sessions": {
+        "practice1": "2025-08-01 13:30:00",
+        "practice2": "2025-08-01 17:00:00",
+        "practice3": "2025-08-02 12:30:00",
+        "qualifying": "2025-08-02 16:00:00",
+        "race": "2025-08-03 15:00:00"
+      }
+    },
+    {
+      "round": 15,
+      "name": "Dutch Grand Prix",
+      "country": "Netherlands",
+      "location": "Zandvoort",
+      "circuit": "Dutch Grand Prix",
+      "date": "2025-08-31",
+      "format": "conventional",
+      "sessions": {
+        "practice1": "2025-08-29 12:30:00",
+        "practice2": "2025-08-29 16:00:00",
+        "practice3": "2025-08-30 11:30:00",
+        "qualifying": "2025-08-30 15:00:00",
+        "race": "2025-08-31 15:00:00"
+      }
+    },
+    {
+      "round": 16,
+      "name": "Italian Grand Prix",
+      "country": "Italy",
+      "location": "Monza",
+      "circuit": "Italian Grand Prix",
+      "date": "2025-09-07",
+      "format": "conventional",
+      "sessions": {
+        "practice1": "2025-09-05 13:30:00",
+        "practice2": "2025-09-05 17:00:00",
+        "practice3": "2025-09-06 12:30:00",
+        "qualifying": "2025-09-06 16:00:00",
+        "race": "2025-09-07 15:00:00"
+      }
+    },
+    {
+      "round": 17,
+      "name": "Azerbaijan Grand Prix",
+      "country": "Azerbaijan",
+      "location": "Baku",
+      "circuit": "Azerbaijan Grand Prix",
+      "date": "2025-09-21",
+      "format": "conventional",
+      "sessions": {
+        "practice1": "2025-09-19 12:30:00",
+        "practice2": "2025-09-19 16:00:00",
+        "practice3": "2025-09-20 12:30:00",
+        "qualifying": "2025-09-20 16:00:00",
+        "race": "2025-09-21 15:00:00"
+      }
+    },
+    {
+      "round": 18,
+      "name": "Singapore Grand Prix",
+      "country": "Singapore",
+      "location": "Marina Bay",
+      "circuit": "Singapore Grand Prix",
+      "date": "2025-10-05",
+      "format": "conventional",
+      "sessions": {
+        "practice1": "2025-10-03 17:30:00",
+        "practice2": "2025-10-03 21:00:00",
+        "practice3": "2025-10-04 17:30:00",
+        "qualifying": "2025-10-04 21:00:00",
+        "race": "2025-10-05 20:00:00"
+      }
+    },
+    {
+      "round": 19,
+      "name": "United States Grand Prix",
+      "country": "United States",
+      "location": "Austin",
+      "circuit": "United States Grand Prix",
+      "date": "2025-10-19",
+      "format": "sprint_qualifying",
+      "sessions": {
+        "practice1": "2025-10-17 12:30:00",
+        "practice2": "2025-10-17 16:30:00",
+        "practice3": "2025-10-18 12:00:00",
+        "qualifying": "2025-10-18 16:00:00",
+        "race": "2025-10-19 14:00:00"
+      }
+    },
+    {
+      "round": 20,
+      "name": "Mexico City Grand Prix",
+      "country": "Mexico",
+      "location": "Mexico City",
+      "circuit": "Mexico City Grand Prix",
+      "date": "2025-10-26",
+      "format": "conventional",
+      "sessions": {
+        "practice1": "2025-10-24 12:30:00",
+        "practice2": "2025-10-24 16:00:00",
+        "practice3": "2025-10-25 11:30:00",
+        "qualifying": "2025-10-25 15:00:00",
+        "race": "2025-10-26 14:00:00"
+      }
+    },
+    {
+      "round": 21,
+      "name": "São Paulo Grand Prix",
+      "country": "Brazil",
+      "location": "São Paulo",
+      "circuit": "São Paulo Grand Prix",
+      "date": "2025-11-09",
+      "format": "sprint_qualifying",
+      "sessions": {
+        "practice1": "2025-11-07 11:30:00",
+        "practice2": "2025-11-07 15:30:00",
+        "practice3": "2025-11-08 11:00:00",
+        "qualifying": "2025-11-08 15:00:00",
+        "race": "2025-11-09 14:00:00"
+      }
+    },
+    {
+      "round": 22,
+      "name": "Las Vegas Grand Prix",
+      "country": "United States",
+      "location": "Las Vegas",
+      "circuit": "Las Vegas Grand Prix",
+      "date": "2025-11-22",
+      "format": "conventional",
+      "sessions": {
+        "practice1": "2025-11-20 16:30:00",
+        "practice2": "2025-11-20 20:00:00",
+        "practice3": "2025-11-21 16:30:00",
+        "qualifying": "2025-11-21 20:00:00",
+        "race": "2025-11-22 20:00:00"
+      }
+    },
+    {
+      "round": 23,
+      "name": "Qatar Grand Prix",
+      "country": "Qatar",
+      "location": "Lusail",
+      "circuit": "Qatar Grand Prix",
+      "date": "2025-11-30",
+      "format": "sprint_qualifying",
+      "sessions": {
+        "practice1": "2025-11-28 16:30:00",
+        "practice2": "2025-11-28 20:30:00",
+        "practice3": "2025-11-29 17:00:00",
+        "qualifying": "2025-11-29 21:00:00",
+        "race": "2025-11-30 19:00:00"
+      }
+    },
+    {
+      "round": 24,
+      "name": "Abu Dhabi Grand Prix",
+      "country": "United Arab Emirates",
+      "location": "Yas Island",
+      "circuit": "Abu Dhabi Grand Prix",
+      "date": "2025-12-07",
+      "format": "conventional",
+      "sessions": {
+        "practice1": "2025-12-05 13:30:00",
+        "practice2": "2025-12-05 17:00:00",
+        "practice3": "2025-12-06 14:30:00",
+        "qualifying": "2025-12-06 18:00:00",
+        "race": "2025-12-07 17:00:00"
+      }
+    }
+  ],
+  "drivers": {
+    "NOR": {
+      "number": 4,
+      "code": "NOR",
+      "firstName": "Lando",
+      "lastName": "Norris",
+      "fullName": "Lando Norris",
+      "team": "McLaren",
+      "teamColor": "FF8000"
+    },
+    "VER": {
+      "number": 1,
+      "code": "VER",
+      "firstName": "Max",
+      "lastName": "Verstappen",
+      "fullName": "Max Verstappen",
+      "team": "Red Bull Racing",
+      "teamColor": "3671C6"
+    },
+    "RUS": {
+      "number": 63,
+      "code": "RUS",
+      "firstName": "George",
+      "lastName": "Russell",
+      "fullName": "George Russell",
+      "team": "Mercedes",
+      "teamColor": "27F4D2"
+    },
+    "ANT": {
+      "number": 12,
+      "code": "ANT",
+      "firstName": "Andrea Kimi",
+      "lastName": "Antonelli",
+      "fullName": "Andrea Kimi Antonelli",
+      "team": "Mercedes",
+      "teamColor": "27F4D2"
+    },
+    "ALB": {
+      "number": 23,
+      "code": "ALB",
+      "firstName": "Alexander",
+      "lastName": "Albon",
+      "fullName": "Alexander Albon",
+      "team": "Williams",
+      "teamColor": "64C4FF"
+    },
+    "STR": {
+      "number": 18,
+      "code": "STR",
+      "firstName": "Lance",
+      "lastName": "Stroll",
+      "fullName": "Lance Stroll",
+      "team": "Aston Martin",
+      "teamColor": "229971"
+    },
+    "HUL": {
+      "number": 27,
+      "code": "HUL",
+      "firstName": "Nico",
+      "lastName": "Hulkenberg",
+      "fullName": "Nico Hulkenberg",
+      "team": "Kick Sauber",
+      "teamColor": "52E252"
+    },
+    "LEC": {
+      "number": 16,
+      "code": "LEC",
+      "firstName": "Charles",
+      "lastName": "Leclerc",
+      "fullName": "Charles Leclerc",
+      "team": "Ferrari",
+      "teamColor": "E80020"
+    },
+    "PIA": {
+      "number": 81,
+      "code": "PIA",
+      "firstName": "Oscar",
+      "lastName": "Piastri",
+      "fullName": "Oscar Piastri",
+      "team": "McLaren",
+      "teamColor": "FF8000"
+    },
+    "HAM": {
+      "number": 44,
+      "code": "HAM",
+      "firstName": "Lewis",
+      "lastName": "Hamilton",
+      "fullName": "Lewis Hamilton",
+      "team": "Ferrari",
+      "teamColor": "E80020"
+    },
+    "GAS": {
+      "number": 10,
+      "code": "GAS",
+      "firstName": "Pierre",
+      "lastName": "Gasly",
+      "fullName": "Pierre Gasly",
+      "team": "Alpine",
+      "teamColor": "0093CC"
+    },
+    "TSU": {
+      "number": 22,
+      "code": "TSU",
+      "firstName": "Yuki",
+      "lastName": "Tsunoda",
+      "fullName": "Yuki Tsunoda",
+      "team": "Racing Bulls",
+      "teamColor": "6692FF"
+    },
+    "OCO": {
+      "number": 31,
+      "code": "OCO",
+      "firstName": "Esteban",
+      "lastName": "Ocon",
+      "fullName": "Esteban Ocon",
+      "team": "Haas F1 Team",
+      "teamColor": "B6BABD"
+    },
+    "BEA": {
+      "number": 87,
+      "code": "BEA",
+      "firstName": "Oliver",
+      "lastName": "Bearman",
+      "fullName": "Oliver Bearman",
+      "team": "Haas F1 Team",
+      "teamColor": "B6BABD"
+    },
+    "LAW": {
+      "number": 30,
+      "code": "LAW",
+      "firstName": "Liam",
+      "lastName": "Lawson",
+      "fullName": "Liam Lawson",
+      "team": "Red Bull Racing",
+      "teamColor": "3671C6"
+    },
+    "BOR": {
+      "number": 5,
+      "code": "BOR",
+      "firstName": "Gabriel",
+      "lastName": "Bortoleto",
+      "fullName": "Gabriel Bortoleto",
+      "team": "Kick Sauber",
+      "teamColor": "52E252"
+    },
+    "ALO": {
+      "number": 14,
+      "code": "ALO",
+      "firstName": "Fernando",
+      "lastName": "Alonso",
+      "fullName": "Fernando Alonso",
+      "team": "Aston Martin",
+      "teamColor": "229971"
+    },
+    "SAI": {
+      "number": 55,
+      "code": "SAI",
+      "firstName": "Carlos",
+      "lastName": "Sainz",
+      "fullName": "Carlos Sainz",
+      "team": "Williams",
+      "teamColor": "64C4FF"
+    },
+    "DOO": {
+      "number": 7,
+      "code": "DOO",
+      "firstName": "Jack",
+      "lastName": "Doohan",
+      "fullName": "Jack Doohan",
+      "team": "Alpine",
+      "teamColor": "0093CC"
+    },
+    "HAD": {
+      "number": 6,
+      "code": "HAD",
+      "firstName": "Isack",
+      "lastName": "Hadjar",
+      "fullName": "Isack Hadjar",
+      "team": "Racing Bulls",
+      "teamColor": "6692FF"
+    }
+  },
+  "teams": {
+    "McLaren": {
+      "name": "McLaren",
+      "color": "FF8000",
+      "drivers": [
+        "NOR",
+        "PIA"
+      ]
+    },
+    "Red Bull Racing": {
+      "name": "Red Bull Racing",
+      "color": "3671C6",
+      "drivers": [
+        "VER",
+        "LAW"
+      ]
+    },
+    "Mercedes": {
+      "name": "Mercedes",
+      "color": "27F4D2",
+      "drivers": [
+        "RUS",
+        "ANT"
+      ]
+    },
+    "Williams": {
+      "name": "Williams",
+      "color": "64C4FF",
+      "drivers": [
+        "ALB",
+        "SAI"
+      ]
+    },
+    "Aston Martin": {
+      "name": "Aston Martin",
+      "color": "229971",
+      "drivers": [
+        "STR",
+        "ALO"
+      ]
+    },
+    "Kick Sauber": {
+      "name": "Kick Sauber",
+      "color": "52E252",
+      "drivers": [
+        "HUL",
+        "BOR"
+      ]
+    },
+    "Ferrari": {
+      "name": "Ferrari",
+      "color": "E80020",
+      "drivers": [
+        "LEC",
+        "HAM"
+      ]
+    },
+    "Alpine": {
+      "name": "Alpine",
+      "color": "0093CC",
+      "drivers": [
+        "GAS",
+        "DOO"
+      ]
+    },
+    "Racing Bulls": {
+      "name": "Racing Bulls",
+      "color": "6692FF",
+      "drivers": [
+        "TSU",
+        "HAD"
+      ]
+    },
+    "Haas F1 Team": {
+      "name": "Haas F1 Team",
+      "color": "B6BABD",
+      "drivers": [
+        "OCO",
+        "BEA"
+      ]
+    }
+  },
+  "circuits": {
+    "Pre-Season Testing": {
+      "name": "Pre-Season Testing",
+      "location": "Sakhir",
+      "country": "Bahrain"
+    },
+    "Australian Grand Prix": {
+      "name": "Australian Grand Prix",
+      "location": "Melbourne",
+      "country": "Australia"
+    },
+    "Chinese Grand Prix": {
+      "name": "Chinese Grand Prix",
+      "location": "Shanghai",
+      "country": "China"
+    },
+    "Japanese Grand Prix": {
+      "name": "Japanese Grand Prix",
+      "location": "Suzuka",
+      "country": "Japan"
+    },
+    "Bahrain Grand Prix": {
+      "name": "Bahrain Grand Prix",
+      "location": "Sakhir",
+      "country": "Bahrain"
+    },
+    "Saudi Arabian Grand Prix": {
+      "name": "Saudi Arabian Grand Prix",
+      "location": "Jeddah",
+      "country": "Saudi Arabia"
+    },
+    "Miami Grand Prix": {
+      "name": "Miami Grand Prix",
+      "location": "Miami Gardens",
+      "country": "United States"
+    },
+    "Emilia Romagna Grand Prix": {
+      "name": "Emilia Romagna Grand Prix",
+      "location": "Imola",
+      "country": "Italy"
+    },
+    "Monaco Grand Prix": {
+      "name": "Monaco Grand Prix",
+      "location": "Monaco",
+      "country": "Monaco"
+    },
+    "Spanish Grand Prix": {
+      "name": "Spanish Grand Prix",
+      "location": "Barcelona",
+      "country": "Spain"
+    },
+    "Canadian Grand Prix": {
+      "name": "Canadian Grand Prix",
+      "location": "Montréal",
+      "country": "Canada"
+    },
+    "Austrian Grand Prix": {
+      "name": "Austrian Grand Prix",
+      "location": "Spielberg",
+      "country": "Austria"
+    },
+    "British Grand Prix": {
+      "name": "British Grand Prix",
+      "location": "Silverstone",
+      "country": "United Kingdom"
+    },
+    "Belgian Grand Prix": {
+      "name": "Belgian Grand Prix",
+      "location": "Spa-Francorchamps",
+      "country": "Belgium"
+    },
+    "Hungarian Grand Prix": {
+      "name": "Hungarian Grand Prix",
+      "location": "Budapest",
+      "country": "Hungary"
+    },
+    "Dutch Grand Prix": {
+      "name": "Dutch Grand Prix",
+      "location": "Zandvoort",
+      "country": "Netherlands"
+    },
+    "Italian Grand Prix": {
+      "name": "Italian Grand Prix",
+      "location": "Monza",
+      "country": "Italy"
+    },
+    "Azerbaijan Grand Prix": {
+      "name": "Azerbaijan Grand Prix",
+      "location": "Baku",
+      "country": "Azerbaijan"
+    },
+    "Singapore Grand Prix": {
+      "name": "Singapore Grand Prix",
+      "location": "Marina Bay",
+      "country": "Singapore"
+    },
+    "United States Grand Prix": {
+      "name": "United States Grand Prix",
+      "location": "Austin",
+      "country": "United States"
+    },
+    "Mexico City Grand Prix": {
+      "name": "Mexico City Grand Prix",
+      "location": "Mexico City",
+      "country": "Mexico"
+    },
+    "São Paulo Grand Prix": {
+      "name": "São Paulo Grand Prix",
+      "location": "São Paulo",
+      "country": "Brazil"
+    },
+    "Las Vegas Grand Prix": {
+      "name": "Las Vegas Grand Prix",
+      "location": "Las Vegas",
+      "country": "United States"
+    },
+    "Qatar Grand Prix": {
+      "name": "Qatar Grand Prix",
+      "location": "Lusail",
+      "country": "Qatar"
+    },
+    "Abu Dhabi Grand Prix": {
+      "name": "Abu Dhabi Grand Prix",
+      "location": "Yas Island",
+      "country": "United Arab Emirates"
+    }
+  }
+}
