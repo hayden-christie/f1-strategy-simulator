@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { AdvancedRaceConfig, WeatherCondition, SafetyCarPeriod, WeatherChange } from '@/lib/types';
 import { generateRandomSafetyCarPeriod, generateRandomWeatherChanges } from '@/lib/advancedSimulator';
+import { formatTimeDelta } from '@/lib';
 
 interface AdvancedConfigProps {
   totalLaps: number;
@@ -211,8 +212,7 @@ export default function AdvancedConfig({ totalLaps, config, onChange }: Advanced
                           className="flex items-center justify-between p-2 bg-gray-700 rounded border border-gray-600"
                         >
                           <span className="text-sm text-white">
-                            Laps {period.startLap}-{period.endLap} (+
-                            {period.lapTimeDelta.toFixed(1)}s/lap)
+                            Laps {period.startLap}-{period.endLap} ({formatTimeDelta(period.lapTimeDelta)}/lap)
                           </span>
                           <button
                             onClick={() => removeSafetyCarPeriod(i)}

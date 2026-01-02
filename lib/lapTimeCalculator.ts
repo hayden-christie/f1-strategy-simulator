@@ -119,16 +119,25 @@ export function calculatePitStopTimeLoss(
 }
 
 /**
- * Format lap time in MM:SS.mmm format
+ * Format lap time in F1 standard format: M:SS.sss or SS.sss
+ * - For times >= 1 minute: M:SS.sss (e.g., "1:28.432")
+ * - For times < 1 minute: SS.sss (e.g., "54.231")
  */
 export function formatLapTime(seconds: number): string {
   const minutes = Math.floor(seconds / 60);
   const secs = seconds % 60;
-  return `${minutes}:${secs.toFixed(3).padStart(6, '0')}`;
+
+  if (minutes > 0) {
+    return `${minutes}:${secs.toFixed(3).padStart(6, '0')}`;
+  }
+  // For times under 1 minute, show just seconds
+  return secs.toFixed(3);
 }
 
 /**
- * Format total race time in HH:MM:SS.mmm format
+ * Format total race time in F1 standard format: H:MM:SS.sss
+ * - Always shows 3 decimal places for milliseconds
+ * - Example: "2:01:20.532" for a 2-hour race
  */
 export function formatRaceTime(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
@@ -138,15 +147,30 @@ export function formatRaceTime(seconds: number): string {
   if (hours > 0) {
     return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toFixed(3).padStart(6, '0')}`;
   }
+  // For times under 1 hour, show minutes:seconds
   return `${minutes}:${secs.toFixed(3).padStart(6, '0')}`;
 }
 
 /**
- * Convert seconds to +/- gap format (e.g., "+1.234" or "-0.500")
+ * Convert seconds to F1 delta format with sign (e.g., "+1.234s" or "-0.500s")
+ * - Negative means faster (better)
+ * - Positive means slower (worse)
  */
 export function formatTimeDelta(seconds: number): string {
   const sign = seconds >= 0 ? '+' : '';
-  return `${sign}${seconds.toFixed(3)}`;
+  return `${sign}${seconds.toFixed(3)}s`;
+}
+
+/**
+ * Get color class for time delta (green for faster, red for slower)
+ * - Negative delta (faster): green
+ * - Positive delta (slower): red
+ * - Zero: neutral
+ */
+export function getTimeDeltaColor(delta: number): string {
+  if (delta < 0) return 'text-[#10b981]'; // Green (faster/better)
+  if (delta > 0) return 'text-[#ef4444]'; // Red (slower/worse)
+  return 'text-[#999999]'; // Neutral gray
 }
 
 /**

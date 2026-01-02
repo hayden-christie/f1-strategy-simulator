@@ -13,6 +13,7 @@ import {
   Filler,
 } from 'chart.js';
 import { SimulationResult } from '@/lib/types';
+import { formatLapTime } from '@/lib';
 
 // Register Chart.js components
 ChartJS.register(
@@ -104,7 +105,7 @@ export default function LapTimeChart({ results }: LapTimeChartProps) {
             if (value === null) {
               return `${label}: PIT STOP`;
             }
-            return `${label}: ${value.toFixed(3)}s`;
+            return `${label}: ${formatLapTime(value)}`;
           },
           afterLabel: function(context: any) {
             const lapIndex = context.dataIndex;
@@ -162,7 +163,7 @@ export default function LapTimeChart({ results }: LapTimeChartProps) {
         beginAtZero: false,
         ticks: {
           callback: function(value: any) {
-            return value.toFixed(1) + 's';
+            return formatLapTime(value);
           },
           color: '#666666',
           font: {

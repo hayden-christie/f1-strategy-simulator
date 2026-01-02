@@ -36,6 +36,7 @@ export {
   formatLapTime,
   formatRaceTime,
   formatTimeDelta,
+  getTimeDeltaColor,
   calculateAverageLapTime,
   findFastestLap,
   findSlowestLap,

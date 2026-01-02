@@ -1,7 +1,7 @@
 'use client';
 
 import { LiveComparison } from '@/lib/types';
-import { formatRaceTime } from '@/lib/lapTimeCalculator';
+import { formatRaceTime, formatLapTime, formatTimeDelta, getTimeDeltaColor } from '@/lib/lapTimeCalculator';
 
 interface PostRaceAnalysisProps {
   comparison: LiveComparison;
@@ -189,10 +189,10 @@ export default function PostRaceAnalysis({ comparison }: PostRaceAnalysisProps) 
               {formatRaceTime(prediction.simulationResult.totalRaceTime + deviations.lapTimeDelta * 57)}
             </div>
             <div className="text-xs text-green-300 mt-1">
-              Avg: {(prediction.simulationResult.averageLapTime + deviations.lapTimeDelta).toFixed(3)}s/lap
+              Avg: {formatLapTime(prediction.simulationResult.averageLapTime + deviations.lapTimeDelta)}/lap
             </div>
             <div className="text-xs text-green-300 mt-1">
-              Fastest: {(prediction.simulationResult.fastestLap + deviations.lapTimeDelta).toFixed(3)}s
+              Fastest: {formatLapTime(prediction.simulationResult.fastestLap + deviations.lapTimeDelta)}
             </div>
           </div>
         </div>
@@ -201,11 +201,10 @@ export default function PostRaceAnalysis({ comparison }: PostRaceAnalysisProps) 
             <div className="text-sm font-semibold text-purple-200">
               Time Deviation:
             </div>
-            <div className={`text-lg font-bold ${deviations.lapTimeDelta > 0 ? 'text-red-400' : 'text-green-400'}`}>
-              {deviations.lapTimeDelta > 0 ? '+' : ''}
-              {(deviations.lapTimeDelta * 57).toFixed(2)}s total
+            <div className={`text-lg font-bold ${getTimeDeltaColor(deviations.lapTimeDelta)}`}>
+              {formatTimeDelta(deviations.lapTimeDelta * 57)} total
               <span className="text-xs ml-2 text-gray-400">
-                ({deviations.lapTimeDelta > 0 ? '+' : ''}{deviations.lapTimeDelta.toFixed(3)}s/lap)
+                ({formatTimeDelta(deviations.lapTimeDelta)}/lap)
               </span>
             </div>
           </div>

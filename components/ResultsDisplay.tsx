@@ -1,7 +1,7 @@
 'use client';
 
 import { SimulationResult } from '@/lib/types';
-import { formatRaceTime, formatLapTime } from '@/lib';
+import { formatRaceTime, formatLapTime, formatTimeDelta, getTimeDeltaColor } from '@/lib';
 
 interface ResultsDisplayProps {
   result: SimulationResult | null;
@@ -139,8 +139,8 @@ export default function ResultsDisplay({ result }: ResultsDisplayProps) {
                     {stop.fromCompound} → {stop.toCompound}
                   </div>
                 </div>
-                <div className="text-sm font-mono font-medium text-red-400">
-                  +{stop.duration.toFixed(2)}s
+                <div className={`text-sm font-mono font-medium ${getTimeDeltaColor(stop.duration)}`}>
+                  {formatTimeDelta(stop.duration)}
                 </div>
               </div>
             ))}
@@ -208,9 +208,9 @@ export default function ResultsDisplay({ result }: ResultsDisplayProps) {
                   <td className="px-4 py-2 text-gray-300">{lap.tireAge}</td>
                   <td className="px-4 py-2 text-right font-mono">
                     {lap.isPitLap ? (
-                      <span className="text-red-400">{lap.lapTime.toFixed(3)}s (PIT)</span>
+                      <span className="text-[#ef4444]">{formatLapTime(lap.lapTime)} (PIT)</span>
                     ) : (
-                      <span className="text-white">{lap.lapTime.toFixed(3)}s</span>
+                      <span className="text-white">{formatLapTime(lap.lapTime)}</span>
                     )}
                   </td>
                   <td className="px-4 py-2 text-right font-mono text-gray-300">

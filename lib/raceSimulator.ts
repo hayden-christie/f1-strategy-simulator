@@ -158,7 +158,7 @@ export function createDefaultRaceConfig(
     pitStopStationary: 2.2, // average pit stop
     startingFuelLoad: 110, // kg - full tank
     fuelPerLap: 1.9, // kg - typical consumption
-    fuelEffect: 0.035, // seconds per kg
+    fuelEffect: 0.025, // seconds per kg - realistic F1 fuel effect
   };
 }
 

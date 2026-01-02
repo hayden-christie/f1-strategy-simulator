@@ -1,7 +1,7 @@
 'use client';
 
 import { SimulationResult } from '@/lib/types';
-import { formatRaceTime, formatTimeDelta } from '@/lib';
+import { formatRaceTime, formatTimeDelta, getTimeDeltaColor, formatLapTime } from '@/lib';
 import { useState } from 'react';
 
 interface StrategyComparisonProps {
@@ -189,8 +189,8 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
                       {formatRaceTime(result.totalRaceTime)}
                     </div>
                     {!isWinner && (
-                      <div className="text-xs text-[#dc0000] font-mono font-bold">
-                        +{formatTimeDelta(timeDelta)}
+                      <div className={`text-xs font-mono font-bold ${getTimeDeltaColor(timeDelta)}`}>
+                        {formatTimeDelta(timeDelta)}
                       </div>
                     )}
                   </div>
@@ -208,15 +208,15 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
                 </div>
                 <div className="bg-[#1a1a1a] rounded p-2 border border-[#333333]">
                   <div className="text-xs text-[#999999] uppercase font-bold mb-1">Avg Lap</div>
-                  <div className="text-base font-bold text-white font-mono truncate">{result.averageLapTime.toFixed(2)}s</div>
+                  <div className="text-base font-bold text-white font-mono truncate">{formatLapTime(result.averageLapTime)}</div>
                 </div>
                 <div className="bg-[#1a1a1a] rounded p-2 border border-[#333333]">
                   <div className="text-xs text-[#999999] uppercase font-bold mb-1">Fastest</div>
-                  <div className="text-base font-bold text-[#14b8a6] font-mono truncate">{result.fastestLap.toFixed(2)}s</div>
+                  <div className="text-base font-bold text-[#10b981] font-mono truncate">{formatLapTime(result.fastestLap)}</div>
                 </div>
                 <div className="bg-[#1a1a1a] rounded p-2 border border-[#333333]">
                   <div className="text-xs text-[#999999] uppercase font-bold mb-1">Slowest</div>
-                  <div className="text-base font-bold text-[#dc0000] font-mono truncate">{result.slowestLap.toFixed(2)}s</div>
+                  <div className="text-base font-bold text-[#ef4444] font-mono truncate">{formatLapTime(result.slowestLap)}</div>
                 </div>
               </div>
 
@@ -292,20 +292,20 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
                         <div className="grid grid-cols-2 gap-2 text-xs font-mono">
                           <div className="flex justify-between">
                             <span className="text-[#666666]">AVG TIME:</span>
-                            <span className="text-white font-bold">{stint.averageLapTime.toFixed(3)}s</span>
+                            <span className="text-white font-bold">{formatLapTime(stint.averageLapTime)}</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-[#666666]">TOTAL DEG:</span>
-                            <span className={`font-bold ${stint.totalDegradation > 1.0 ? 'text-[#dc0000]' : 'text-[#14b8a6]'}`}>
-                              +{stint.totalDegradation.toFixed(3)}s
+                            <span className={`font-bold ${getTimeDeltaColor(stint.totalDegradation)}`}>
+                              {formatTimeDelta(stint.totalDegradation)}
                             </span>
                           </div>
                         </div>
                         <div className="mt-1 pt-1 border-t border-[#333333]">
                           <div className="flex justify-between text-xs font-mono">
                             <span className="text-[#666666]">DEG RATE (per lap):</span>
-                            <span className={`font-bold ${stint.degradationRate > 0.05 ? 'text-[#dc0000]' : 'text-[#14b8a6]'}`}>
-                              +{stint.degradationRate.toFixed(4)}s/lap
+                            <span className={`font-bold ${getTimeDeltaColor(stint.degradationRate)}`}>
+                              {formatTimeDelta(stint.degradationRate)}/lap
                             </span>
                           </div>
                         </div>
@@ -351,9 +351,9 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
                             </td>
                             <td className="px-2 py-1 text-right">
                               {lap.isPitLap ? (
-                                <span className="text-[#dc0000] font-bold">{lap.lapTime.toFixed(3)}s</span>
+                                <span className="text-[#ef4444] font-bold">{formatLapTime(lap.lapTime)}</span>
                               ) : (
-                                <span className="text-white">{lap.lapTime.toFixed(3)}s</span>
+                                <span className="text-white">{formatLapTime(lap.lapTime)}</span>
                               )}
                             </td>
                             <td className="px-2 py-1 text-right text-[#999999]">
@@ -394,7 +394,7 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
                             <span className="text-[#666666]">→</span>
                             <div className={`w-3 h-3 rounded-full ${getTireColor(stop.toCompound)}`} />
                           </div>
-                          <span className="text-[#dc0000] font-bold">+{stop.duration.toFixed(2)}s</span>
+                          <span className={`font-bold ${getTimeDeltaColor(stop.duration)}`}>{formatTimeDelta(stop.duration)}</span>
                         </div>
                       </div>
                     ))}
@@ -419,13 +419,13 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
                 </p>
                 {sortedResults.length > 1 && (
                   <p>
-                    → Time gap (1st to {sortedResults.length}th): <strong className="text-[#dc0000]">
-                      +{(sortedResults[sortedResults.length - 1].totalRaceTime - winner.totalRaceTime).toFixed(3)} seconds
+                    → Time gap (1st to {sortedResults.length}th): <strong className={getTimeDeltaColor(sortedResults[sortedResults.length - 1].totalRaceTime - winner.totalRaceTime)}>
+                      {formatTimeDelta(sortedResults[sortedResults.length - 1].totalRaceTime - winner.totalRaceTime)}
                     </strong>
                   </p>
                 )}
                 <p>
-                  → Winner stats: {winner.pitStops.length} pit {winner.pitStops.length === 1 ? 'stop' : 'stops'}, {winner.averageLapTime.toFixed(3)}s average lap time
+                  → Winner stats: {winner.pitStops.length} pit {winner.pitStops.length === 1 ? 'stop' : 'stops'}, {formatLapTime(winner.averageLapTime)} average lap time
                 </p>
               </div>
             </div>

@@ -19,21 +19,21 @@ export const TIRE_COMPOUNDS: Record<TireCompound, TireCompoundData> = {
   SOFT: {
     name: 'SOFT',
     baseGripLevel: 1.0, // Fastest - baseline
-    degradationRate: 0.045, // ~4.5% per lap - wears quickly
+    degradationRate: 0.0008, // ~0.08% per lap - realistic F1 (~0.05-0.08s per lap at 90s base)
     optimalLapRange: [0, 20], // Best performance in first 20 laps
     color: '#FF0000', // Red
   },
   MEDIUM: {
     name: 'MEDIUM',
-    baseGripLevel: 0.97, // ~0.3s slower per lap than soft
-    degradationRate: 0.025, // ~2.5% per lap - moderate wear
+    baseGripLevel: 0.998, // ~0.18s slower per lap than soft at 90s base
+    degradationRate: 0.0005, // ~0.05% per lap - moderate wear (~0.03-0.05s per lap)
     optimalLapRange: [0, 30], // Best performance in first 30 laps
     color: '#FFD700', // Yellow/Gold
   },
   HARD: {
     name: 'HARD',
-    baseGripLevel: 0.94, // ~0.6s slower per lap than soft
-    degradationRate: 0.015, // ~1.5% per lap - minimal wear
+    baseGripLevel: 0.996, // ~0.36s slower per lap than soft at 90s base
+    degradationRate: 0.0003, // ~0.03% per lap - minimal wear (~0.02-0.03s per lap)
     optimalLapRange: [0, 45], // Best performance in first 45 laps
     color: '#FFFFFF', // White
   },
@@ -63,18 +63,38 @@ export function calculateTirePerformance(tireState: TireState): number {
   // Base performance from compound
   const basePerformance = compound.baseGripLevel;
 
-  // Calculate degradation effect
-  // Degradation accelerates non-linearly (exponential wear)
-  const degradationFactor = Math.pow(1 + compound.degradationRate, tireState.age);
+  // Calculate degradation effect - Non-linear acceleration curve
+  // Real F1: degradation accelerates as tires wear (exponential-like behavior)
+  // Linear component: base wear rate
+  const linearDeg = compound.degradationRate * tireState.age;
 
-  // Cliff effect - performance drops dramatically after optimal range
+  // Quadratic component: degradation accelerates with tire age
+  // Stronger coefficient to create U-shaped stint pattern
+  // Fresh tires (age 0-5): minimal quadratic contribution
+  // Mid stint (age 6-12): quadratic starts to dominate
+  // Worn tires (age 13+): quadratic overpowers fuel benefit
+  const quadraticDeg = compound.degradationRate * 0.4 * Math.pow(tireState.age / 15, 2) * tireState.age;
+
+  // Tire warm-up penalty for first few laps (cold tires)
+  // Real F1: tires need 2-3 laps to reach optimal operating temperature
+  // This creates the U-shaped pattern's "dip" at the start
+  let warmUpPenalty = 0;
+  if (tireState.age < 3) {
+    // Penalty decreases as tire warms up: lap 0 = 0.15%, lap 1 = 0.10%, lap 2 = 0.05%
+    warmUpPenalty = (3 - tireState.age) * 0.0005;
+  }
+
+  const degradationFactor = 1 + linearDeg + quadraticDeg + warmUpPenalty;
+
+  // Cliff effect - performance drops more after optimal range
   const [optimalStart, optimalEnd] = compound.optimalLapRange;
   let cliffMultiplier = 1.0;
 
   if (tireState.age > optimalEnd) {
-    // Beyond optimal range, performance degrades faster
+    // Beyond optimal range, performance degrades faster (but not dramatically)
+    // Real F1: teams can extend stints 5-10 laps past optimal with gradual falloff
     const lapsOverLimit = tireState.age - optimalEnd;
-    cliffMultiplier = 1 + (lapsOverLimit * 0.02); // 2% additional penalty per lap over limit
+    cliffMultiplier = 1 + (lapsOverLimit * 0.003); // 0.3% additional penalty per lap over limit
   }
 
   // Combine factors: lower grip + degradation + cliff = slower lap times
