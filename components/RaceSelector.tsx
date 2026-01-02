@@ -28,7 +28,7 @@ export default function RaceSelector({
         }}
         className="w-full px-2 py-1.5 text-sm bg-gray-700 border border-gray-600 text-white rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       >
-        <option value="" className="bg-gray-700">Choose a race...</option>
+        <option value="" className="bg-gray-700">Select a race to begin...</option>
         {races
           .filter((race) => race.format !== 'testing')
           .map((race) => (

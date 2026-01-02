@@ -10,6 +10,14 @@ interface PostRaceAnalysisProps {
 export default function PostRaceAnalysis({ comparison }: PostRaceAnalysisProps) {
   const { prediction, liveData, deviations, accuracy } = comparison;
 
+  // DEBUG: Log the data being received
+  console.log('🏁 POST-RACE DEBUG:');
+  console.log('Prediction:', prediction);
+  console.log('Simulation Result:', prediction.simulationResult);
+  console.log('Laps array:', prediction.simulationResult.laps);
+  console.log('Laps count:', prediction.simulationResult.laps?.length);
+  console.log('First 3 laps:', prediction.simulationResult.laps?.slice(0, 3));
+
   return (
     <div className="space-y-3">
       {/* Header */}
@@ -108,6 +116,10 @@ export default function PostRaceAnalysis({ comparison }: PostRaceAnalysisProps) 
       {/* Lap Time Comparison Chart */}
       <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
         <h3 className="text-lg font-bold mb-3 text-white">Lap Time Progression</h3>
+        {/* DEBUG: Show lap count */}
+        <div className="text-xs text-yellow-400 mb-2">
+          DEBUG: {prediction.simulationResult.laps?.length || 0} laps in data
+        </div>
         <div className="relative h-48 bg-gray-900 rounded p-3">
           {/* Simple visualization showing predicted vs actual lap times */}
           <div className="flex items-end justify-between h-full gap-0.5">

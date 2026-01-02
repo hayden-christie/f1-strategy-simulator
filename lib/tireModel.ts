@@ -69,11 +69,11 @@ export function calculateTirePerformance(tireState: TireState): number {
   const linearDeg = compound.degradationRate * tireState.age;
 
   // Quadratic component: degradation accelerates with tire age
-  // Stronger coefficient to create U-shaped stint pattern
+  // Conservative coefficient to create realistic U-shaped stint pattern
   // Fresh tires (age 0-5): minimal quadratic contribution
-  // Mid stint (age 6-12): quadratic starts to dominate
-  // Worn tires (age 13+): quadratic overpowers fuel benefit
-  const quadraticDeg = compound.degradationRate * 0.4 * Math.pow(tireState.age / 15, 2) * tireState.age;
+  // Mid stint (age 6-15): gradual quadratic increase
+  // Worn tires (age 16+): noticeable but not exponential degradation
+  const quadraticDeg = compound.degradationRate * 0.10 * Math.pow(tireState.age / 15, 2) * tireState.age;
 
   // Tire warm-up penalty for first few laps (cold tires)
   // Real F1: tires need 2-3 laps to reach optimal operating temperature
@@ -92,9 +92,9 @@ export function calculateTirePerformance(tireState: TireState): number {
 
   if (tireState.age > optimalEnd) {
     // Beyond optimal range, performance degrades faster (but not dramatically)
-    // Real F1: teams can extend stints 5-10 laps past optimal with gradual falloff
+    // Real F1: teams can extend stints 10-15 laps past optimal with manageable falloff
     const lapsOverLimit = tireState.age - optimalEnd;
-    cliffMultiplier = 1 + (lapsOverLimit * 0.003); // 0.3% additional penalty per lap over limit
+    cliffMultiplier = 1 + (lapsOverLimit * 0.001); // 0.1% additional penalty per lap over limit
   }
 
   // Combine factors: lower grip + degradation + cliff = slower lap times

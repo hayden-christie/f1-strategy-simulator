@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { AdvancedRaceConfig, WeatherCondition, SafetyCarPeriod, WeatherChange } from '@/lib/types';
 import { generateRandomSafetyCarPeriod, generateRandomWeatherChanges } from '@/lib/advancedSimulator';
 import { formatTimeDelta } from '@/lib';
+import { Tooltip, InfoLabel } from './Tooltip';
 
 interface AdvancedConfigProps {
   totalLaps: number;
@@ -48,7 +49,12 @@ export default function AdvancedConfig({ totalLaps, config, onChange }: Advanced
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between text-left"
       >
-        <h2 className="text-lg font-bold text-white">Advanced Configuration</h2>
+        <h2 className="text-lg font-bold text-white">
+          <InfoLabel
+            label="Advanced Configuration"
+            tooltip="Optional race conditions: fuel effect, weather changes, safety cars, tire degradation, and track evolution"
+          />
+        </h2>
         <span className="text-xl text-gray-400">{isExpanded ? '−' : '+'}</span>
       </button>
 
@@ -58,9 +64,14 @@ export default function AdvancedConfig({ totalLaps, config, onChange }: Advanced
           <div className="border-t border-gray-700 pt-2">
             <div className="flex items-center justify-between mb-1.5">
               <div>
-                <h3 className="text-sm font-semibold text-white">Enhanced Fuel Effect</h3>
+                <h3 className="text-sm font-semibold text-white">
+                  <InfoLabel
+                    label="Enhanced Fuel Effect"
+                    tooltip="Cars get faster as fuel burns off during the race (~0.03s per lap improvement)"
+                  />
+                </h3>
                 <p className="text-xs text-gray-400">
-                  Cars get faster as fuel burns off (~0.03-0.05s/kg)
+                  Lighter car = faster lap times
                 </p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">

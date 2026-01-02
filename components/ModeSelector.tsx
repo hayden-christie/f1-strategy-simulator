@@ -1,6 +1,7 @@
 'use client';
 
 import { RaceMode } from '@/lib/types';
+import { Tooltip } from './Tooltip';
 
 interface ModeSelectorProps {
   currentMode: RaceMode;
@@ -17,19 +18,21 @@ export default function ModeSelector({
     <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
       <h2 className="text-lg font-bold mb-2 text-white">Race Mode</h2>
       <div className="grid grid-cols-3 gap-2">
-        <button
-          onClick={() => onModeChange('PRE_RACE')}
-          className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-            currentMode === 'PRE_RACE'
-              ? 'bg-blue-600 text-white border-2 border-blue-400'
-              : 'bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600'
-          }`}
-        >
-          <div className="text-center">
-            <div className="font-bold">Pre-Race</div>
-            <div className="text-xs opacity-75">Predict Strategy</div>
-          </div>
-        </button>
+        <Tooltip text="Run simulations before the race to predict optimal strategies">
+          <button
+            onClick={() => onModeChange('PRE_RACE')}
+            className={`w-full px-3 py-2 rounded text-sm font-medium transition-colors ${
+              currentMode === 'PRE_RACE'
+                ? 'bg-blue-600 text-white border-2 border-blue-400'
+                : 'bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600'
+            }`}
+          >
+            <div className="text-center">
+              <div className="font-bold">Pre-Race</div>
+              <div className="text-xs opacity-75">Predict Strategy</div>
+            </div>
+          </button>
+        </Tooltip>
 
         <button
           onClick={() => onModeChange('LIVE')}
@@ -55,19 +58,21 @@ export default function ModeSelector({
           </div>
         </button>
 
-        <button
-          onClick={() => onModeChange('POST_RACE')}
-          className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-            currentMode === 'POST_RACE'
-              ? 'bg-purple-600 text-white border-2 border-purple-400'
-              : 'bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600'
-          }`}
-        >
-          <div className="text-center">
-            <div className="font-bold">Post-Race</div>
-            <div className="text-xs opacity-75">Analyze Results</div>
-          </div>
-        </button>
+        <Tooltip text="Compare your predictions to actual race results and analyze accuracy">
+          <button
+            onClick={() => onModeChange('POST_RACE')}
+            className={`w-full px-3 py-2 rounded text-sm font-medium transition-colors ${
+              currentMode === 'POST_RACE'
+                ? 'bg-purple-600 text-white border-2 border-purple-400'
+                : 'bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600'
+            }`}
+          >
+            <div className="text-center">
+              <div className="font-bold">Post-Race</div>
+              <div className="text-xs opacity-75">Analyze Results</div>
+            </div>
+          </button>
+        </Tooltip>
       </div>
 
       <div className="mt-3 pt-3 border-t border-gray-700">

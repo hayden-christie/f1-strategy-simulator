@@ -3,6 +3,7 @@
 import { SimulationResult } from '@/lib/types';
 import { formatRaceTime, formatTimeDelta, getTimeDeltaColor, formatLapTime } from '@/lib';
 import { useState } from 'react';
+import { Tooltip, InfoLabel } from './Tooltip';
 
 interface StrategyComparisonProps {
   results: SimulationResult[];
@@ -295,7 +296,12 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
                             <span className="text-white font-bold">{formatLapTime(stint.averageLapTime)}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-[#666666]">TOTAL DEG:</span>
+                            <span className="text-[#666666]">
+                              <InfoLabel
+                                label="TOTAL DEG"
+                                tooltip="Total time lost to tire degradation over this stint (first lap to last lap)"
+                              />:
+                            </span>
                             <span className={`font-bold ${getTimeDeltaColor(stint.totalDegradation)}`}>
                               {formatTimeDelta(stint.totalDegradation)}
                             </span>
@@ -303,7 +309,12 @@ export default function StrategyComparison({ results }: StrategyComparisonProps)
                         </div>
                         <div className="mt-1 pt-1 border-t border-[#333333]">
                           <div className="flex justify-between text-xs font-mono">
-                            <span className="text-[#666666]">DEG RATE (per lap):</span>
+                            <span className="text-[#666666]">
+                              <InfoLabel
+                                label="DEG RATE"
+                                tooltip="Tire degradation rate: average time lost per lap due to tire wear"
+                              /> (per lap):
+                            </span>
                             <span className={`font-bold ${getTimeDeltaColor(stint.degradationRate)}`}>
                               {formatTimeDelta(stint.degradationRate)}/lap
                             </span>

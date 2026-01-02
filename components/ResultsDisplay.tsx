@@ -2,6 +2,7 @@
 
 import { SimulationResult } from '@/lib/types';
 import { formatRaceTime, formatLapTime, formatTimeDelta, getTimeDeltaColor } from '@/lib';
+import { Tooltip, InfoLabel } from './Tooltip';
 
 interface ResultsDisplayProps {
   result: SimulationResult | null;
@@ -11,9 +12,17 @@ export default function ResultsDisplay({ result }: ResultsDisplayProps) {
   if (!result) {
     return (
       <div className="p-8 border-2 border-dashed border-gray-600 rounded-lg text-center text-gray-400">
+        <div className="mb-4">
+          <svg className="w-16 h-16 mx-auto text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+        </div>
         <p className="text-lg font-medium">No simulation results yet</p>
-        <p className="text-sm mt-2">
-          Select a race, build a strategy, and click "Run Simulation" to see results
+        <p className="text-sm mt-2 text-gray-500">
+          Build a strategy and run simulation to see results
+        </p>
+        <p className="text-xs mt-4 text-gray-600">
+          Results will show total race time, lap times, pit stops, and tire strategy analysis
         </p>
       </div>
     );
@@ -102,7 +111,12 @@ export default function ResultsDisplay({ result }: ResultsDisplayProps) {
           <div className="text-2xl font-bold text-white">{result.pitStops.length}</div>
         </div>
         <div className="bg-gray-700 p-4 rounded-lg border border-gray-600">
-          <div className="text-xs text-gray-400 mb-1">Average Lap</div>
+          <div className="text-xs text-gray-400 mb-1">
+            <InfoLabel
+              label="Average Lap"
+              tooltip="Average lap time across the entire race (excluding pit stops)"
+            />
+          </div>
           <div className="text-2xl font-bold text-white">{result.averageLapTime.toFixed(2)}s</div>
         </div>
         <div className="bg-gray-700 p-4 rounded-lg border border-gray-600">
@@ -168,7 +182,12 @@ export default function ResultsDisplay({ result }: ResultsDisplayProps) {
                 </div>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-400">Average Lap Time</span>
+                <span className="text-gray-400">
+                  <InfoLabel
+                    label="Avg Lap"
+                    tooltip="Average lap time for this stint (lower is faster)"
+                  />
+                </span>
                 <span className="font-mono font-medium text-white">{stint.averageLapTime.toFixed(3)}s</span>
               </div>
             </div>

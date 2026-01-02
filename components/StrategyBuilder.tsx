@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Strategy, TireCompound } from '@/lib/types';
+import { Tooltip, InfoLabel } from './Tooltip';
 
 interface PitStopInput {
   id: string;
@@ -124,25 +125,38 @@ export default function StrategyBuilder({
 
       <div>
         <label htmlFor="starting-compound" className="block text-xs font-bold mb-1 text-white uppercase tracking-wide">
-          Starting Tire
+          <InfoLabel
+            label="Starting Tire"
+            tooltip="Choose your opening compound: Soft (fastest, wears quickly), Medium (balanced), Hard (slowest, most durable)"
+          />
         </label>
         <div className="flex gap-2">
-          {tireCompounds.map((compound) => (
-            <button
-              key={compound}
-              onClick={() => setStartingCompound(compound)}
-              className={`flex-1 px-2 py-2 rounded border-2 transition-all text-xs ${
-                startingCompound === compound
-                  ? 'border-[#dc0000] bg-[#dc0000] text-white shadow-lg shadow-red-900/50'
-                  : 'border-[#333333] bg-[#141414] hover:border-[#444444] text-[#999999]'
-              }`}
-            >
-              <div className="flex items-center justify-center gap-1.5">
-                <div className={`w-4 h-4 rounded-full ${getTireColor(compound)}`} />
-                <span className="font-bold uppercase">{compound}</span>
-              </div>
-            </button>
-          ))}
+          {tireCompounds.map((compound) => {
+            const tooltips: Record<TireCompound, string> = {
+              SOFT: 'Fastest compound but degrades quickly (~0.05-0.08s/lap). Best for qualifying or short stints.',
+              MEDIUM: 'Balanced compound with moderate speed and degradation (~0.03-0.05s/lap). Versatile choice.',
+              HARD: 'Most durable compound but slowest (~0.02-0.03s/lap). Best for long stints.',
+              INTERMEDIATE: 'For light rain conditions. Not available in strategy builder.',
+              WET: 'For heavy rain conditions. Not available in strategy builder.'
+            };
+            return (
+              <Tooltip key={compound} text={tooltips[compound]}>
+                <button
+                  onClick={() => setStartingCompound(compound)}
+                  className={`flex-1 px-2 py-2 rounded border-2 transition-all text-xs ${
+                    startingCompound === compound
+                      ? 'border-[#dc0000] bg-[#dc0000] text-white shadow-lg shadow-red-900/50'
+                      : 'border-[#333333] bg-[#141414] hover:border-[#444444] text-[#999999]'
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-1.5">
+                    <div className={`w-4 h-4 rounded-full ${getTireColor(compound)}`} />
+                    <span className="font-bold uppercase">{compound}</span>
+                  </div>
+                </button>
+              </Tooltip>
+            );
+          })}
         </div>
       </div>
 
@@ -158,9 +172,10 @@ export default function StrategyBuilder({
         </div>
 
         {pitStops.length === 0 ? (
-          <div className="p-3 border-2 border-dashed border-[#333333] rounded text-center">
+          <div className="p-4 border-2 border-dashed border-[#333333] rounded text-center">
             <p className="text-xs text-[#666666] font-mono uppercase">No pit stops configured</p>
-            <p className="text-xs text-[#444444] mt-1">Click "Add" to create strategy</p>
+            <p className="text-xs text-[#888888] mt-2 font-normal">Add pit stops to create your race strategy</p>
+            <p className="text-xs text-[#666666] mt-1">Plan when to change tires during the race</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -223,7 +238,12 @@ export default function StrategyBuilder({
         <div className="flex items-start gap-2">
           <div className="w-1 h-full bg-gradient-to-b from-[#14b8a6] to-[#0d9488] flex-shrink-0"></div>
           <div className="flex-1">
-            <h4 className="text-xs font-bold mb-2 text-[#14b8a6] uppercase tracking-wide">Strategy Preview</h4>
+            <h4 className="text-xs font-bold mb-2 text-[#14b8a6] uppercase tracking-wide">
+              <InfoLabel
+                label="Strategy Preview"
+                tooltip="Summary of your race strategy including total laps and tire stint breakdown"
+              />
+            </h4>
             <div className="text-xs text-white space-y-1.5 font-mono">
               <div className="flex justify-between">
                 <span className="text-[#999999]">TOTAL LAPS:</span>

@@ -4,7 +4,101 @@
  * Sample data from a 2025 race to demonstrate the post-race comparison feature
  */
 
-import { RacePrediction, DriverLiveData, LiveComparison } from './types';
+import { RacePrediction, DriverLiveData, LiveComparison, LapData } from './types';
+
+/**
+ * Generate realistic lap-by-lap data for demo purposes
+ * Simulates Bahrain GP with Medium → Hard → Medium tire strategy
+ */
+function generateDemoLapData(): LapData[] {
+  console.log('🔧 generateDemoLapData() called - generating 57 laps');
+  const laps: LapData[] = [];
+  let cumulativeTime = 0;
+
+  // Strategy: Medium (0-17), Pit (18), Hard (19-37), Pit (38), Medium (39-57)
+  const baseLapTime = 90.0;
+  const fuelPerLap = 1.9;
+  const fuelEffect = 0.025; // s/kg
+  const startingFuel = 110;
+
+  for (let lapNum = 1; lapNum <= 57; lapNum++) {
+    let compound: 'SOFT' | 'MEDIUM' | 'HARD' = 'MEDIUM';
+    let tireAge = lapNum - 1;
+    let isPitLap = false;
+    let lapTime = baseLapTime;
+
+    // Determine compound and tire age based on strategy
+    if (lapNum <= 17) {
+      compound = 'MEDIUM';
+      tireAge = lapNum - 1;
+    } else if (lapNum === 18) {
+      // Pit lap
+      compound = 'MEDIUM';
+      tireAge = lapNum - 1;
+      isPitLap = true;
+      lapTime = baseLapTime + 22.3; // Add pit stop time
+    } else if (lapNum <= 37) {
+      compound = 'HARD';
+      tireAge = lapNum - 19; // Reset tire age after pit stop
+    } else if (lapNum === 38) {
+      // Pit lap
+      compound = 'HARD';
+      tireAge = lapNum - 19;
+      isPitLap = true;
+      lapTime = baseLapTime + 22.1; // Add pit stop time
+    } else {
+      compound = 'MEDIUM';
+      tireAge = lapNum - 39; // Reset tire age after second pit stop
+    }
+
+    // Calculate realistic lap time (if not pit lap)
+    if (!isPitLap) {
+      // Fuel effect (car gets lighter)
+      const fuelLoad = Math.max(0, startingFuel - (lapNum - 1) * fuelPerLap);
+      const fuelPenalty = fuelLoad * fuelEffect;
+
+      // Tire degradation (simplified U-shaped pattern)
+      let tireDeg = 0;
+      if (tireAge < 3) {
+        // Warm-up phase (slightly slower)
+        tireDeg = (3 - tireAge) * 0.15;
+      } else {
+        // Degradation phase
+        const degradationRate = compound === 'MEDIUM' ? 0.05 : 0.03; // MEDIUM or HARD
+        tireDeg = tireAge * degradationRate + Math.pow(tireAge / 15, 2) * tireAge * degradationRate * 0.10;
+      }
+
+      // Compound base offset
+      const compoundOffset = compound === 'MEDIUM' ? 0.18 : 0.36; // MEDIUM or HARD
+
+      lapTime = baseLapTime + compoundOffset + tireDeg + fuelPenalty;
+
+      // Add some realistic variation (deterministic based on lap number)
+      lapTime += Math.sin(lapNum * 0.7) * 0.2;
+    }
+
+    cumulativeTime += lapTime;
+
+    // Calculate fuel load for this lap
+    const fuelLoad = Math.max(0, startingFuel - (lapNum - 1) * fuelPerLap);
+
+    laps.push({
+      lapNumber: lapNum,
+      lapTime,
+      cumulativeTime,
+      tireCompound: compound,
+      tireAge,
+      fuelLoad,
+      isPitLap,
+      pitStopDuration: isPitLap ? (lapNum === 18 ? 22.3 : 22.1) : undefined,
+    });
+  }
+
+  console.log(`✅ Generated ${laps.length} laps. First lap:`, laps[0]);
+  console.log(`✅ Last lap:`, laps[laps.length - 1]);
+
+  return laps;
+}
 
 /**
  * Demo prediction for Bahrain Grand Prix 2025
@@ -35,7 +129,7 @@ export const DEMO_BAHRAIN_PREDICTION: RacePrediction = {
       ],
     },
     totalRaceTime: 5124.5, // 1:25:24.5
-    laps: [], // Would contain full lap data
+    laps: generateDemoLapData(), // Generated realistic lap-by-lap data
     pitStops: [
       { lap: 18, fromCompound: 'MEDIUM', toCompound: 'HARD', duration: 22.3 },
       { lap: 38, fromCompound: 'HARD', toCompound: 'MEDIUM', duration: 22.1 },
