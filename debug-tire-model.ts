@@ -152,26 +152,37 @@ console.log(`   Fastest: Lap ${fastestLapData.lap} at ${fastestLapData.lapTime.t
 
 // U-shaped pattern check
 console.log(`\n5. U-SHAPED PATTERN CHECK:`);
-const earlyLaps = lapData.slice(0, 3); // Laps 1-3
-const midLaps = lapData.slice(3, 12); // Laps 4-12
-const lateLaps = lapData.slice(12); // Laps 13+
+const lap1 = lapData[0].lapTime;
+const lap2 = lapData[1].lapTime;
+const lap3 = lapData[2].lapTime;
+const lap4 = lapData[3].lapTime;
 
-const avgEarly = earlyLaps.reduce((sum, d) => sum + d.lapTime, 0) / earlyLaps.length;
-const avgMid = midLaps.reduce((sum, d) => sum + d.lapTime, 0) / midLaps.length;
-const avgLate = lateLaps.reduce((sum, d) => sum + d.lapTime, 0) / lateLaps.length;
+// Check for warm-up: lap 1 should be slower than laps 2-4
+const hasWarmUp = lap1 > Math.min(lap2, lap3, lap4);
 
-console.log(`   Laps 1-3 average:  ${avgEarly.toFixed(3)}s`);
-console.log(`   Laps 4-12 average: ${avgMid.toFixed(3)}s`);
-console.log(`   Laps 13+ average:  ${avgLate.toFixed(3)}s`);
+// Check for degradation: later laps should be slower
+const lap10 = lapData[9].lapTime;
+const lap20 = lapData[19].lapTime;
+const hasDegradation = lap20 > lap10 && lap10 > lap4;
 
-if (avgEarly > avgMid && avgLate > avgMid) {
-  console.log(`   ✓ U-SHAPED PATTERN DETECTED (warm-up → fastest → degradation)`);
-} else if (avgMid < avgEarly && avgLate < avgMid) {
-  console.log(`   ✗ CONTINUOUSLY GETTING FASTER (no degradation effect)`);
-} else if (avgLate > avgMid && avgEarly <= avgMid) {
-  console.log(`   ⚠ NO WARM-UP PENALTY (starts fast, degrades later)`);
+console.log(`   Lap 1:  ${lap1.toFixed(3)}s (warm-up)`);
+console.log(`   Lap 2:  ${lap2.toFixed(3)}s ${lap2 < lap1 ? '✓ faster' : '✗ slower'}`);
+console.log(`   Lap 3:  ${lap3.toFixed(3)}s`);
+console.log(`   Lap 4:  ${lap4.toFixed(3)}s (peak)`);
+console.log(`   Lap 10: ${lap10.toFixed(3)}s (degrading)`);
+console.log(`   Lap 20: ${lap20.toFixed(3)}s (degraded)`);
+console.log();
+
+if (hasWarmUp && hasDegradation) {
+  console.log(`   ✓ U-SHAPED PATTERN DETECTED`);
+  console.log(`   - Warm-up phase: Lap 1 slower by ${(lap1 - lap2).toFixed(3)}s`);
+  console.log(`   - Degradation phase: Lap 20 slower than Lap 4 by ${(lap20 - lap4).toFixed(3)}s`);
+} else if (!hasWarmUp && hasDegradation) {
+  console.log(`   ⚠ DEGRADATION WITHOUT WARM-UP`);
+} else if (hasWarmUp && !hasDegradation) {
+  console.log(`   ⚠ WARM-UP WITHOUT DEGRADATION`);
 } else {
-  console.log(`   ? UNEXPECTED PATTERN`);
+  console.log(`   ✗ NO REALISTIC TIRE BEHAVIOR DETECTED`);
 }
 
 console.log('\n' + '='.repeat(100));

@@ -56,30 +56,58 @@ export const TIRE_COMPOUNDS: Record<TireCompound, TireCompoundData> = {
 /**
  * Calculate tire performance factor based on age and compound
  * Returns a multiplier for lap time (1.0 = no penalty, >1.0 = slower)
+ *
+ * Realistic F1 tire behavior:
+ * - Laps 1-3: Warm-up phase (tires cold, slower)
+ * - Laps 4-optimal: Peak performance (fastest laps)
+ * - After optimal: Gradual degradation, accelerating quadratically
  */
 export function calculateTirePerformance(tireState: TireState): number {
   const compound = TIRE_COMPOUNDS[tireState.compound];
-
-  // Base performance from compound
-  const basePerformance = compound.baseGripLevel;
-
-  // Calculate degradation effect
-  // Degradation accelerates non-linearly (exponential wear)
-  const degradationFactor = Math.pow(1 + compound.degradationRate, tireState.age);
-
-  // Cliff effect - performance drops dramatically after optimal range
   const [optimalStart, optimalEnd] = compound.optimalLapRange;
-  let cliffMultiplier = 1.0;
 
-  if (tireState.age > optimalEnd) {
-    // Beyond optimal range, performance degrades faster
-    const lapsOverLimit = tireState.age - optimalEnd;
-    cliffMultiplier = 1 + (lapsOverLimit * 0.02); // 2% additional penalty per lap over limit
+  // Start at 1.0 (no penalty for fresh tires at peak grip)
+  let performanceMultiplier = 1.0;
+
+  // 1. WARM-UP PENALTY (Laps 1-3: cold tires)
+  if (tireState.age <= 2) {
+    // Lap 0 (first lap): +1.2% penalty (~1.0s on 90s lap)
+    // Lap 1 (second lap): +0.6% penalty (~0.5s on 90s lap)
+    // Lap 2 (third lap): +0.3% penalty (~0.25s on 90s lap)
+    const warmUpPenalty = [0.012, 0.006, 0.003][tireState.age] || 0;
+    performanceMultiplier += warmUpPenalty;
   }
 
-  // Combine factors: lower grip + degradation + cliff = slower lap times
-  // Invert basePerformance since lower grip = slower (higher time multiplier)
-  const performanceMultiplier = (1 / basePerformance) * degradationFactor * cliffMultiplier;
+  // 2. BASE COMPOUND DIFFERENCE (slower compounds are inherently slower)
+  // This is the fundamental speed difference between compounds
+  // SOFT = 1.0 (baseline), MEDIUM = 0.97 (3% less grip), HARD = 0.94 (6% less grip)
+  // Convert grip to time penalty: less grip = more time
+  const compoundTimePenalty = (1.0 - compound.baseGripLevel);
+  performanceMultiplier += compoundTimePenalty;
+
+  // 3. DEGRADATION (starts minimal, accelerates after optimal range)
+  if (tireState.age > 0) {
+    // Within optimal range: very minimal linear degradation
+    if (tireState.age <= optimalEnd) {
+      // Minimal degradation during optimal window
+      // ~0.05-0.10% per lap for most compounds
+      const linearDegradation = tireState.age * (compound.degradationRate * 0.15);
+      performanceMultiplier += linearDegradation;
+    } else {
+      // Beyond optimal: quadratic degradation (cliff effect)
+      const lapsOverLimit = tireState.age - optimalEnd;
+
+      // Linear component during optimal window
+      const optimalDegradation = optimalEnd * (compound.degradationRate * 0.15);
+
+      // Quadratic component after optimal (accelerating wear)
+      // Starts small, accelerates rapidly
+      const quadraticFactor = compound.degradationRate * 0.5;
+      const cliffDegradation = quadraticFactor * Math.pow(lapsOverLimit, 1.5);
+
+      performanceMultiplier += optimalDegradation + cliffDegradation;
+    }
+  }
 
   return performanceMultiplier;
 }
