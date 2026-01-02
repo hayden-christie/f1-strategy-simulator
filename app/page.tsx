@@ -11,11 +11,16 @@ import StrategyComparison from '@/components/StrategyComparison';
 import AdvancedConfig from '@/components/AdvancedConfig';
 import PostRaceAnalysis from '@/components/PostRaceAnalysis';
 import SavedPredictions from '@/components/SavedPredictions';
+import WelcomeModal from '@/components/WelcomeModal';
+import Tutorial from '@/components/Tutorial';
+import ErrorMessage from '@/components/ErrorMessage';
+import Tooltip from '@/components/Tooltip';
 import { F1SeasonData, F1Race } from '@/types/f1-data';
 import { Strategy, SimulationResult, RaceConfiguration, AdvancedRaceConfig, RaceMode } from '@/lib/types';
 import { simulateRace, simulateAdvancedRace, getPitLaneTimeLoss, createDefaultAdvancedConfig, Driver, hasDemoData, getDemoComparison, savePrediction, generatePredictionId, getAllPredictions } from '@/lib';
 import { getTotalLaps, getBaseLapTime } from '@/lib/raceData';
 import { generateOptimalStrategies } from '@/lib/strategyGenerator';
+import { validateStrategies, formatValidationErrors } from '@/lib/validation';
 import type { RacePrediction } from '@/lib/types';
 
 export default function Home() {
@@ -45,6 +50,11 @@ export default function Home() {
   const [savedPredictions, setSavedPredictions] = useState<RacePrediction[]>([]);
   const [selectedPrediction, setSelectedPrediction] = useState<RacePrediction | null>(null);
 
+  // UI Polish: Welcome modal, tutorial, errors
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
+
   // Load F1 season data on mount
   useEffect(() => {
     fetch('/f1_season_data.json')
@@ -61,6 +71,15 @@ export default function Home() {
   useEffect(() => {
     const predictions = getAllPredictions();
     setSavedPredictions(predictions);
+  }, []);
+
+  // Check for first-time visit
+  useEffect(() => {
+    const hasVisited = localStorage.getItem('f1sim_has_visited');
+    if (!hasVisited) {
+      setShowWelcome(true);
+      localStorage.setItem('f1sim_has_visited', 'true');
+    }
   }, []);
 
   const handleRaceSelect = (race: F1Race) => {
@@ -110,8 +129,25 @@ export default function Home() {
   };
 
   const runSimulation = () => {
-    if (!selectedRace || strategies.length === 0) {
-      alert('Please select a race and create at least one strategy');
+    // Clear previous errors
+    setValidationError(null);
+
+    if (!selectedRace) {
+      setValidationError('Please select a race before running the simulation.');
+      return;
+    }
+
+    if (strategies.length === 0) {
+      setValidationError('Please create at least one strategy. Click "+ Add Strategy" or "Load Optimal Strategies" to get started.');
+      return;
+    }
+
+    // Validate all strategies
+    const totalLaps = getTotalLaps(selectedRace.name);
+    const validation = validateStrategies(strategies, totalLaps);
+
+    if (!validation.isValid) {
+      setValidationError(formatValidationErrors(validation.errors));
       return;
     }
 
@@ -119,7 +155,6 @@ export default function Home() {
 
     // Simulate with a small delay for UI feedback
     setTimeout(() => {
-      const totalLaps = getTotalLaps(selectedRace.name);
       const baseLapTime = getBaseLapTime(selectedRace.name);
 
       // Create race configuration
@@ -238,6 +273,25 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#141414]">
+      {/* Welcome Modal for first-time visitors */}
+      {showWelcome && (
+        <WelcomeModal
+          onDismiss={() => setShowWelcome(false)}
+          onStartTutorial={() => {
+            setShowWelcome(false);
+            setShowTutorial(true);
+          }}
+        />
+      )}
+
+      {/* Tutorial */}
+      {showTutorial && (
+        <Tutorial
+          onComplete={() => setShowTutorial(false)}
+          onSkip={() => setShowTutorial(false)}
+        />
+      )}
+
       {/* Header */}
       <header className="bg-gradient-to-b from-[#1a1a1a] to-[#151515] border-b-2 border-[#333333] shadow-2xl">
         <div className="max-w-[1800px] mx-auto px-3 py-4">
@@ -262,8 +316,11 @@ export default function Home() {
           {/* Row 1: Race Selection, Driver Selection, Mode Selection */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Race Selection */}
-            <div className="bg-[#1f1f1f] rounded-lg border border-[#333333] p-4 shadow-lg hover:shadow-xl hover:border-[#3a3a3a] transition-all duration-300">
-              <h2 className="text-sm font-bold mb-2 text-white uppercase tracking-wide">Race Selection</h2>
+            <div className="bg-[#1f1f1f] rounded-lg border border-[#333333] p-4 shadow-lg hover:shadow-xl hover:border-[#3a3a3a] transition-all duration-300 race-selector">
+              <div className="flex items-center gap-2 mb-2">
+                <h2 className="text-sm font-bold text-white uppercase tracking-wide">Race Selection</h2>
+                <Tooltip content="Select a race from the 2025 F1 calendar. Each circuit has unique characteristics like lap count, pit lane time loss, and base lap times." />
+              </div>
               <RaceSelector
                 races={seasonData.races}
                 selectedRace={selectedRace}
@@ -281,8 +338,11 @@ export default function Home() {
             </div>
 
             {/* Driver Selection */}
-            <div className="bg-[#1f1f1f] rounded-lg border border-[#333333] p-4 shadow-lg hover:shadow-xl hover:border-[#3a3a3a] transition-all duration-300">
-              <h2 className="text-sm font-bold mb-2 text-white uppercase tracking-wide">Driver Selection</h2>
+            <div className="bg-[#1f1f1f] rounded-lg border border-[#333333] p-4 shadow-lg hover:shadow-xl hover:border-[#3a3a3a] transition-all duration-300 driver-selector">
+              <div className="flex items-center gap-2 mb-2">
+                <h2 className="text-sm font-bold text-white uppercase tracking-wide">Driver Selection</h2>
+                <Tooltip content="Choose a driver to apply team-specific performance modifiers. Drivers have different tire management skills that affect degradation rates." />
+              </div>
               <DriverSelector
                 selectedDriver={selectedDriver}
                 onDriverSelect={setSelectedDriver}
@@ -321,9 +381,12 @@ export default function Home() {
 
           {/* Row 3: Strategy Builder (Full Width) */}
           {selectedRace && raceMode === 'PRE_RACE' && (
-            <div className="bg-[#1f1f1f] rounded-lg border border-[#333333] p-4 shadow-lg hover:shadow-xl hover:border-[#3a3a3a] transition-all duration-300">
+            <div className="bg-[#1f1f1f] rounded-lg border border-[#333333] p-4 shadow-lg hover:shadow-xl hover:border-[#3a3a3a] transition-all duration-300 strategy-builder">
               <div className="flex items-center justify-between mb-2">
-                <h2 className="text-sm font-bold text-white uppercase tracking-wide">Strategy Builder ({strategies.length}/3)</h2>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-sm font-bold text-white uppercase tracking-wide">Strategy Builder ({strategies.length}/3)</h2>
+                  <Tooltip content="Create up to 3 pit stop strategies to compare. Specify when to pit and which tire compound to use. Click 'Load Optimal Strategies' for AI-generated suggestions." />
+                </div>
                 <button
                   onClick={addNewStrategy}
                   disabled={strategies.length >= 3}
@@ -391,13 +454,21 @@ export default function Home() {
             </div>
           )}
 
+          {/* Validation Error Message */}
+          {validationError && (
+            <ErrorMessage
+              message={validationError}
+              onDismiss={() => setValidationError(null)}
+            />
+          )}
+
           {/* Row 4: Action Buttons */}
           {selectedRace && raceMode === 'PRE_RACE' && strategies.length > 0 && (
-            <div className="flex gap-3 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center run-simulation">
               <button
                 onClick={runSimulation}
                 disabled={isSimulating}
-                className="px-8 py-3 bg-gradient-to-r from-[#dc0000] to-[#c50000] text-white font-bold uppercase tracking-wide rounded-lg shadow-lg shadow-red-900/40 hover:shadow-xl hover:shadow-red-900/60 hover:from-[#e10600] hover:to-[#d00000] transition-all duration-300 hover:-translate-y-0.5 disabled:bg-[#333333] disabled:from-[#333333] disabled:to-[#333333] disabled:text-[#666666] disabled:cursor-not-allowed disabled:shadow-none disabled:transform-none"
+                className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-[#dc0000] to-[#c50000] text-white font-bold uppercase tracking-wide rounded-lg shadow-lg shadow-red-900/40 hover:shadow-xl hover:shadow-red-900/60 hover:from-[#e10600] hover:to-[#d00000] transition-all duration-300 hover:-translate-y-0.5 disabled:bg-[#333333] disabled:from-[#333333] disabled:to-[#333333] disabled:text-[#666666] disabled:cursor-not-allowed disabled:shadow-none disabled:transform-none"
               >
                 {isSimulating ? (
                   <span className="flex items-center justify-center gap-2">
@@ -534,7 +605,7 @@ export default function Home() {
 
         {/* Full-Width Results Section */}
         {simulationResults.length > 0 && (
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 space-y-3 results-section">
             {/* Results Header with Save Buttons */}
             <div className="bg-[#1f1f1f] rounded-lg border border-[#333333] p-4 shadow-lg hover:shadow-xl hover:border-[#3a3a3a] transition-all duration-300">
               <div className="flex items-center justify-between">
