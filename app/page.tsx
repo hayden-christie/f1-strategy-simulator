@@ -299,8 +299,8 @@ export default function Home() {
             <div className="flex items-center gap-3">
               <div className="w-1.5 h-14 bg-gradient-to-b from-[#dc0000] via-[#e10600] to-[#dc0000] rounded-full shadow-lg shadow-red-900/50"></div>
               <div>
-                <h1 className="text-2xl font-extrabold text-white uppercase tracking-wider" style={{letterSpacing: '0.1em'}}>
-                  F1 Strategy Simulator
+                <h1 className="text-6xl font-extrabold uppercase tracking-wider" style={{color: '#ff0000', fontSize: '4rem', letterSpacing: '0.1em'}}>
+                  F1 STRATEGY SIMULATOR - TEST VERSION
                 </h1>
                 <p className="text-[#14b8a6] text-sm font-mono tracking-wide font-semibold">
                   2025 SEASON // TELEMETRY & STRATEGY ANALYSIS
