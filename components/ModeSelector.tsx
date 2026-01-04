@@ -17,11 +17,11 @@ export default function ModeSelector({
   return (
     <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
       <h2 className="text-lg font-bold mb-2 text-white">Race Mode</h2>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="flex gap-0.5">
         <Tooltip text="Run simulations before the race to predict optimal strategies">
           <button
             onClick={() => onModeChange('PRE_RACE')}
-            className={`w-full px-3 py-2 rounded text-sm font-medium transition-colors ${
+            className={`flex-1 px-3 py-2 rounded-l text-sm font-medium transition-colors ${
               currentMode === 'PRE_RACE'
                 ? 'bg-blue-600 text-white border-2 border-blue-400'
                 : 'bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600'
@@ -34,34 +34,36 @@ export default function ModeSelector({
           </button>
         </Tooltip>
 
-        <button
-          onClick={() => onModeChange('LIVE')}
-          disabled={!liveAvailable}
-          className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-            currentMode === 'LIVE'
-              ? 'bg-green-600 text-white border-2 border-green-400'
-              : liveAvailable
-              ? 'bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600'
-              : 'bg-gray-800 text-gray-500 border border-gray-700 cursor-not-allowed'
-          }`}
-        >
-          <div className="text-center">
-            <div className="font-bold flex items-center justify-center gap-1">
-              {currentMode === 'LIVE' && (
-                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-              )}
-              Live
+        <Tooltip text="Track race progress in real-time (available during live races)">
+          <button
+            onClick={() => onModeChange('LIVE')}
+            disabled={!liveAvailable}
+            className={`flex-1 px-3 py-2 text-sm font-medium transition-colors ${
+              currentMode === 'LIVE'
+                ? 'bg-green-600 text-white border-2 border-green-400'
+                : liveAvailable
+                ? 'bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600'
+                : 'bg-gray-800 text-gray-500 border border-gray-700 cursor-not-allowed'
+            }`}
+          >
+            <div className="text-center">
+              <div className="font-bold flex items-center justify-center gap-1">
+                {currentMode === 'LIVE' && (
+                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                )}
+                Live
+              </div>
+              <div className="text-xs opacity-75">
+                {liveAvailable ? 'Track Race' : 'Not Available'}
+              </div>
             </div>
-            <div className="text-xs opacity-75">
-              {liveAvailable ? 'Track Race' : 'Not Available'}
-            </div>
-          </div>
-        </button>
+          </button>
+        </Tooltip>
 
         <Tooltip text="Compare your predictions to actual race results and analyze accuracy">
           <button
             onClick={() => onModeChange('POST_RACE')}
-            className={`w-full px-3 py-2 rounded text-sm font-medium transition-colors ${
+            className={`flex-1 px-3 py-2 rounded-r text-sm font-medium transition-colors ${
               currentMode === 'POST_RACE'
                 ? 'bg-purple-600 text-white border-2 border-purple-400'
                 : 'bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600'
