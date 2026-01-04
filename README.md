@@ -12,7 +12,7 @@
 
 ## 🚀 Live Demo
 
-**[View Live Demo →](https://your-vercel-url.vercel.app)**
+**[View Live Demo →](https://f1-strategy-simulator.vercel.app/)**
 
 ---
 
@@ -274,16 +274,6 @@ npx tsx test-demo-data.ts
 
 ---
 
-## 🌟 Screenshots
-
-*Coming soon - Screenshots will be added to showcase:*
-- Strategy builder interface
-- Lap time progression charts
-- Post-race analysis dashboard
-- Strategy comparison views
-
----
-
 ## 🔮 Future Enhancements
 
 ### Planned Features
@@ -304,7 +294,6 @@ npx tsx test-demo-data.ts
   - Race prediction competitions
 
 - [ ] **Advanced Simulation**
-  - DRS (Drag Reduction System) modeling
   - Overtaking probability calculations
   - Race start simulations
   - Virtual Safety Car scenarios
@@ -313,25 +302,6 @@ npx tsx test-demo-data.ts
   - React Native version
   - Live race notifications
   - Quick strategy comparisons
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these guidelines:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Development Guidelines
-
-- Use TypeScript for type safety
-- Follow existing code style (ESLint + Prettier)
-- Add tests for new simulation logic
-- Update documentation for API changes
 
 ---
 
