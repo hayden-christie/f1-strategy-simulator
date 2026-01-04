@@ -10,13 +10,10 @@ interface PostRaceAnalysisProps {
 export default function PostRaceAnalysis({ comparison }: PostRaceAnalysisProps) {
   const { prediction, liveData, deviations, accuracy } = comparison;
 
-  // DEBUG: Log the data being received
-  console.log('🏁 POST-RACE DEBUG:');
-  console.log('Prediction:', prediction);
-  console.log('Simulation Result:', prediction.simulationResult);
-  console.log('Laps array:', prediction.simulationResult.laps);
-  console.log('Laps count:', prediction.simulationResult.laps?.length);
-  console.log('First 3 laps:', prediction.simulationResult.laps?.slice(0, 3));
+  // Check if this is real race data or demo data
+  // Demo data has specific indicators (e.g., status 'FINISHED' and position 1)
+  // Real race data will come from FastF1 API in 2026
+  const isRealData = false; // TODO: Change to true when FastF1 integration is complete
 
   return (
     <div className="space-y-3">
@@ -27,14 +24,90 @@ export default function PostRaceAnalysis({ comparison }: PostRaceAnalysisProps) 
           {prediction.raceName} - {prediction.raceDate}
         </p>
         <div className="mt-2 text-xs text-purple-300">
-          Comparing prediction "{prediction.strategy.name}" {prediction.driverId ? `for driver ${prediction.driverId.toUpperCase()}` : ''} vs. actual race results
+          Saved prediction: "{prediction.strategy.name}" {prediction.driverId ? `for driver ${prediction.driverId.toUpperCase()}` : ''}
         </div>
       </div>
 
-      {/* Accuracy Summary */}
+      {/* Real Data Not Available Message */}
+      {!isRealData && (
+        <div className="bg-gradient-to-r from-blue-900/40 to-cyan-900/40 border-2 border-cyan-600/50 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0 mt-0.5">
+              <svg className="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-cyan-100 mb-2">Real Race Data Not Yet Available</h3>
+              <p className="text-sm text-cyan-200/90 mb-3">
+                Post-Race Analysis with actual race results will be enabled when the 2026 F1 season begins.
+                The simulator will integrate with FastF1 to fetch real telemetry data and compare your predictions
+                against actual race outcomes.
+              </p>
+              <div className="bg-cyan-950/50 rounded-lg p-3 border border-cyan-700/30">
+                <div className="text-xs font-semibold text-cyan-300 mb-1.5">Coming in 2026:</div>
+                <ul className="text-xs text-cyan-200/80 space-y-1">
+                  <li className="flex items-center gap-2">
+                    <span className="text-cyan-400">✓</span>
+                    Real lap times and pit stop data from live races
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-cyan-400">✓</span>
+                    Accuracy metrics comparing your predictions to actual results
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-cyan-400">✓</span>
+                    Strategy deviation analysis with detailed breakdowns
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-cyan-400">✓</span>
+                    Historical race comparison across the season
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Saved Prediction Details */}
       <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
-        <h3 className="text-lg font-bold mb-3 text-white">Prediction Accuracy</h3>
-        <div className="grid grid-cols-3 gap-3">
+        <h3 className="text-lg font-bold mb-3 text-white">Your Saved Prediction</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-gradient-to-br from-blue-900/50 to-blue-800/30 rounded-lg p-3 border-2 border-blue-600">
+            <div className="text-xs text-blue-300 mb-1 font-semibold">PREDICTED RACE TIME</div>
+            <div className="text-2xl font-bold text-blue-400">
+              {formatRaceTime(prediction.simulationResult.totalRaceTime)}
+            </div>
+            <div className="text-xs text-blue-300 mt-1">
+              Avg: {prediction.simulationResult.averageLapTime.toFixed(3)}s/lap
+            </div>
+            <div className="text-xs text-blue-300 mt-1">
+              Fastest: {prediction.simulationResult.fastestLap.toFixed(3)}s
+            </div>
+          </div>
+          <div className="bg-gradient-to-br from-purple-900/50 to-purple-800/30 rounded-lg p-3 border-2 border-purple-600">
+            <div className="text-xs text-purple-300 mb-1 font-semibold">STRATEGY</div>
+            <div className="text-lg font-bold text-purple-400 mb-2">
+              {prediction.strategy.pitStops.length}-Stop
+            </div>
+            <div className="text-xs text-purple-300">
+              <div className="mb-1">Start: {prediction.strategy.startingCompound}</div>
+              {prediction.strategy.pitStops.map((ps, i) => (
+                <div key={i}>Lap {ps.lap} → {ps.tireCompound}</div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Show full comparison only when real data is available */}
+      {isRealData && (
+        <>
+          {/* Accuracy Summary */}
+          <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
+            <h3 className="text-lg font-bold mb-3 text-white">Prediction Accuracy</h3>
+            <div className="grid grid-cols-3 gap-3">
           <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
             <div className="text-xs text-gray-400 mb-1">Pit Stop Timing</div>
             <div className="flex items-end gap-2">
@@ -223,16 +296,18 @@ export default function PostRaceAnalysis({ comparison }: PostRaceAnalysisProps) 
         </div>
       </div>
 
-      {/* Insights */}
-      <div className="bg-blue-900 border border-blue-700 rounded-lg p-3">
-        <h3 className="text-sm font-semibold text-blue-100 mb-2">Analysis Insights</h3>
-        <ul className="text-xs text-blue-200 space-y-1">
-          <li>• Overall prediction accuracy: {((accuracy.pitStopAccuracy + accuracy.tireChoiceAccuracy + accuracy.timeAccuracy) / 3).toFixed(1)}%</li>
-          <li>• Pit stop timing was within {Math.max(...deviations.pitStopTiming.map(Math.abs))} laps of actual</li>
-          <li>• This demonstrates the simulator's ability to predict race strategies</li>
-          <li>• During the 2025 season, you'll compare against real race data from FastF1</li>
-        </ul>
-      </div>
+          {/* Insights */}
+          <div className="bg-blue-900 border border-blue-700 rounded-lg p-3">
+            <h3 className="text-sm font-semibold text-blue-100 mb-2">Analysis Insights</h3>
+            <ul className="text-xs text-blue-200 space-y-1">
+              <li>• Overall prediction accuracy: {((accuracy.pitStopAccuracy + accuracy.tireChoiceAccuracy + accuracy.timeAccuracy) / 3).toFixed(1)}%</li>
+              <li>• Pit stop timing was within {Math.max(...deviations.pitStopTiming.map(Math.abs))} laps of actual</li>
+              <li>• This demonstrates the simulator's ability to predict race strategies</li>
+              <li>• Real-time comparison powered by FastF1 telemetry data</li>
+            </ul>
+          </div>
+        </>
+      )}
     </div>
   );
 }
