@@ -275,7 +275,6 @@ export default function TimelineStrategyBuilder({
               </div>
             );
           })}
-            </div>
           </div>
         </div>
 
