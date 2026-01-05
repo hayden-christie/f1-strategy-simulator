@@ -129,26 +129,13 @@ export default function TimelineStrategyBuilder({
         </div>
 
         {/* Timeline Bar */}
-        <div className="relative mb-2 mt-8">
-          {/* Lap markers at strategic points */}
+        <div className="relative mb-8 mt-8">
+          {/* Lap markers - only at start and end */}
           <div className="absolute -top-6 left-0 right-0 h-5">
             {/* Start marker */}
             <div className="absolute left-0 text-xs font-medium" style={{ color: colors.text.secondary }}>
               L1
             </div>
-            {/* Pit stop markers */}
-            {strategy.pitStops.map((stop, idx) => (
-              <div
-                key={idx}
-                className="absolute -translate-x-1/2 text-xs font-medium"
-                style={{
-                  left: `${(stop.lap / totalLaps) * 100}%`,
-                  color: colors.text.secondary,
-                }}
-              >
-                L{stop.lap}
-              </div>
-            ))}
             {/* Finish marker */}
             <div className="absolute right-0 text-xs font-medium" style={{ color: colors.text.secondary }}>
               L{totalLaps}
@@ -275,28 +262,32 @@ export default function TimelineStrategyBuilder({
                     zIndex: 10,
                   }}
                 >
-                  {/* Pit stop icon - enhanced with flag */}
+                  {/* Wide pit stop box with 'P' */}
                   <div
-                    className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold whitespace-nowrap"
-                    style={{ color: colors.accent.red }}
+                    className="flex items-center justify-center font-bold transition-all duration-200 group-hover:brightness-110"
+                    style={{
+                      width: '26px',
+                      height: '70px',
+                      backgroundColor: colors.accent.red,
+                      color: 'white',
+                      fontSize: '20px',
+                      boxShadow: '0 0 8px rgba(232, 56, 79, 0.6)',
+                    }}
                   >
-                    🏁 L{stop.lap}
+                    P
                   </div>
 
-                  {/* Thick white vertical line */}
+                  {/* Pit details below timeline */}
                   <div
-                    className="transition-all duration-200 group-hover:w-1.5"
-                    style={{
-                      height: '70px',
-                      width: '4px',
-                      backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                      boxShadow: '0 0 4px rgba(255, 255, 255, 0.5)',
-                    }}
-                  />
+                    className="absolute top-full mt-2 left-1/2 -translate-x-1/2 text-xs font-medium whitespace-nowrap"
+                    style={{ color: colors.accent.red }}
+                  >
+                    🏁 Lap {stop.lap}
+                  </div>
 
                   {/* Strategic hover tooltip for pit stop */}
                   <div
-                    className="absolute top-full mt-3 left-1/2 -translate-x-1/2 px-3 py-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-20"
+                    className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-20"
                     style={{
                       backgroundColor: 'rgba(26, 31, 46, 0.95)',
                       border: '1px solid #2a3441',
