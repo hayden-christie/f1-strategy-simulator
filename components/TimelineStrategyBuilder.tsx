@@ -158,12 +158,14 @@ export default function TimelineStrategyBuilder({
 
                 // Strategic recommendation logic
                 const getRecommendation = () => {
-                  const optimalRanges = {
+                  const optimalRanges: Record<string, { min: number; max: number; ideal: number }> = {
                     SOFT: { min: 10, max: 18, ideal: 14 },
                     MEDIUM: { min: 18, max: 30, ideal: 24 },
                     HARD: { min: 25, max: 45, ideal: 35 },
+                    INTERMEDIATE: { min: 20, max: 40, ideal: 30 },
+                    WET: { min: 10, max: 25, ideal: 15 },
                   };
-                  const range = optimalRanges[segment.compound];
+                  const range = optimalRanges[segment.compound] || { min: 10, max: 30, ideal: 20 };
 
                   if (stintLength >= range.min && stintLength <= range.max) {
                     if (Math.abs(stintLength - range.ideal) <= 3) {
@@ -244,12 +246,14 @@ export default function TimelineStrategyBuilder({
               const newCompound = stop.tireCompound;
 
               // Strategic pit window analysis
-              const optimalWindows = {
+              const optimalWindows: Record<string, { min: number; max: number }> = {
                 SOFT: { min: 10, max: 18 },
                 MEDIUM: { min: 18, max: 30 },
                 HARD: { min: 25, max: 45 },
+                INTERMEDIATE: { min: 20, max: 40 },
+                WET: { min: 10, max: 25 },
               };
-              const prevWindow = optimalWindows[previousCompound];
+              const prevWindow = optimalWindows[previousCompound] || { min: 10, max: 30 };
               const isOptimalTiming = stop.lap >= prevWindow.min && stop.lap <= prevWindow.max;
 
               return (
