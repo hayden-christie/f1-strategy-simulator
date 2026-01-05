@@ -16,12 +16,12 @@ export default function RightSidebar({
   currentMode,
   selectedRace,
 }: RightSidebarProps) {
-  // Show reopen button when closed
+  // Show reopen button when closed (desktop only)
   if (!isOpen) {
     return (
       <button
         onClick={onToggle}
-        className="fixed right-0 top-6 w-8 h-16 rounded-l-lg flex items-center justify-center transition-all hover:w-10 z-40"
+        className="hidden md:flex fixed right-0 top-6 w-8 h-16 rounded-l-lg items-center justify-center transition-all hover:w-10 z-40"
         style={{
           backgroundColor: colors.bg.card,
           border: `1px solid ${colors.border.default}`,
@@ -39,7 +39,7 @@ export default function RightSidebar({
 
   return (
     <aside
-      className="fixed right-0 top-0 h-full transition-all duration-300 ease-in-out z-40 overflow-y-auto"
+      className="hidden md:block fixed right-0 top-0 h-full transition-all duration-300 ease-in-out z-40 overflow-y-auto"
       style={{
         width: '320px',
         backgroundColor: colors.bg.sidebar,
