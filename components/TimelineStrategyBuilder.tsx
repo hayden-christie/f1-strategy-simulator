@@ -104,7 +104,7 @@ export default function TimelineStrategyBuilder({
 
   return (
     <div className="space-y-6">
-      {/* Timeline View - Modern Dashboard Style */}
+      {/* Timeline View - Simplified */}
       <div
         className="p-6 rounded-xl"
         style={{
@@ -113,213 +113,88 @@ export default function TimelineStrategyBuilder({
           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
         }}
       >
-        {/* Header - Race Progress */}
-        <div className="flex items-center justify-between mb-4">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-semibold" style={{ color: colors.text.secondary }}>
-            Race Progress
+            Race Timeline
           </h3>
-          <div className="flex items-center gap-2 text-sm font-medium" style={{ color: colors.text.primary }}>
-            <span>🏁</span>
-            <span>{totalLapsCovered}/{totalLaps} Laps</span>
+          <div className="text-xs" style={{ color: colors.text.secondary }}>
+            {totalLapsCovered}/{totalLaps} Laps
           </div>
         </div>
 
-        {/* Modern Progress Bar Container */}
-        <div className="relative mb-4">
-          {/* Continuous Progress Bar */}
+        {/* Simple Timeline Bar */}
+        <div className="relative mb-2">
           <div
-            className="relative overflow-hidden"
+            className="relative"
             style={{
-              height: '85px',
-              borderRadius: '12px',
-              backgroundColor: colors.bg.sidebar,
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.25)',
+              height: '60px',
+              borderRadius: '8px',
+              overflow: 'hidden',
             }}
           >
-            {/* Flowing tire segments */}
+            {/* Simple tire segments */}
             <div className="relative h-full flex">
               {segments.map((segment, index) => {
                 const stintLength = segment.end - segment.start + 1;
                 const baseColor = getTireColor(segment.compound);
-                const nextSegment = segments[index + 1];
-                const nextColor = nextSegment ? getTireColor(nextSegment.compound) : baseColor;
-
-                // Create smooth gradient blend with next segment
-                const hasNextSegment = index < segments.length - 1;
-                const gradientStyle = hasNextSegment
-                  ? `linear-gradient(to right,
-                      ${baseColor}f0 0%,
-                      ${baseColor} 45%,
-                      ${baseColor} 85%,
-                      ${baseColor}cc 95%,
-                      ${nextColor}80 100%)`
-                  : `linear-gradient(to bottom, ${baseColor}f5 0%, ${baseColor} 100%)`;
 
                 return (
                   <div
                     key={index}
-                    className="relative h-full flex items-center justify-center group"
+                    className="relative h-full flex items-center justify-center"
                     style={{
                       width: `${segment.width}%`,
-                      background: gradientStyle,
-                      filter: 'brightness(1)',
-                      transition: 'filter 0.2s ease',
-                      cursor: 'pointer',
-                      // Add rounded corners to first and last segments
-                      borderTopLeftRadius: index === 0 ? '12px' : '0',
-                      borderBottomLeftRadius: index === 0 ? '12px' : '0',
-                      borderTopRightRadius: index === segments.length - 1 ? '12px' : '0',
-                      borderBottomRightRadius: index === segments.length - 1 ? '12px' : '0',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.filter = 'brightness(1.15)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.filter = 'brightness(1)';
+                      backgroundColor: baseColor,
+                      borderTopLeftRadius: index === 0 ? '8px' : '0',
+                      borderBottomLeftRadius: index === 0 ? '8px' : '0',
+                      borderTopRightRadius: index === segments.length - 1 ? '8px' : '0',
+                      borderBottomRightRadius: index === segments.length - 1 ? '8px' : '0',
                     }}
                   >
-                    <div className="text-sm font-semibold opacity-80" style={{
+                    {/* Tire compound letter inside segment */}
+                    <div className="text-lg font-bold" style={{
                       color: segment.compound === 'HARD' ? '#1a1f2e' : colors.text.inverse,
-                      textShadow: segment.compound === 'HARD' ? 'none' : '0 1px 2px rgba(0, 0, 0, 0.3)',
                     }}>
                       {getTireLabel(segment.compound)}
-                    </div>
-                    {/* Enhanced Tooltip */}
-                    <div
-                      className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-xs pointer-events-none z-20"
-                      style={{
-                        backgroundColor: colors.bg.sidebar,
-                        border: `2px solid ${getTireColor(segment.compound)}`,
-                        color: colors.text.primary,
-                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.6)',
-                      }}
-                    >
-                      <div className="font-bold mb-1">{segment.compound} Tires</div>
-                      <div style={{ color: colors.text.secondary }}>
-                        Laps {segment.start} - {segment.end}
-                      </div>
-                      <div style={{ color: colors.text.secondary }}>
-                        Stint Length: {stintLength} laps
-                      </div>
-                      <div className="mt-1 pt-1 border-t" style={{ borderColor: colors.border.default }}>
-                        <div className="text-xs" style={{ color: colors.text.muted }}>
-                          Degradation increases over stint
-                        </div>
-                      </div>
                     </div>
                   </div>
                 );
               })}
             </div>
 
-            {/* Pit stop markers - Vertical divider inside + arrow below */}
+            {/* Simple pit stop markers - white vertical lines */}
             {strategy.pitStops.map((stop, index) => {
-            const position = (stop.lap / totalLaps) * 100;
-            // Determine old tire compound
-            const previousCompound = index === 0
-              ? strategy.startingCompound
-              : strategy.pitStops[index - 1].tireCompound;
-            const newCompound = stop.tireCompound;
+              const position = (stop.lap / totalLaps) * 100;
 
-            return (
-              <React.Fragment key={index}>
-                {/* Vertical divider line inside the bar */}
+              return (
                 <div
-                  className="absolute top-0 -translate-x-1/2 pointer-events-none"
+                  key={index}
+                  className="absolute top-0 -translate-x-1/2"
                   style={{
                     left: `${position}%`,
                     height: '100%',
-                    width: '3px',
-                    background: `linear-gradient(to bottom, ${colors.accent.red}, #ffffff)`,
-                    boxShadow: '0 0 8px rgba(239, 68, 68, 0.6)',
+                    width: '2px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
                     zIndex: 5,
                   }}
                 />
-
-                {/* Arrow and label below the bar */}
-                <div
-                  className="absolute -translate-x-1/2 cursor-pointer group"
-                  style={{
-                    left: `${position}%`,
-                    top: '100%',
-                    zIndex: 10,
-                    marginTop: '8px',
-                  }}
-                >
-                  {/* Downward Arrow */}
-                  <div className="flex flex-col items-center">
-                    <div
-                      className="text-2xl transition-transform group-hover:scale-110"
-                      style={{
-                        color: colors.accent.red,
-                        filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
-                      }}
-                    >
-                      ↓
-                    </div>
-                    {/* Pit label */}
-                    <div className="text-xs font-medium mt-1 whitespace-nowrap" style={{
-                      color: colors.text.secondary,
-                    }}>
-                      Pit Lap {stop.lap}
-                    </div>
-                  </div>
-                {/* Enhanced Tooltip */}
-                <div
-                  className="absolute top-14 left-1/2 -translate-x-1/2 px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-xs pointer-events-none z-20"
-                  style={{
-                    backgroundColor: colors.bg.sidebar,
-                    border: `2px solid ${colors.accent.red}`,
-                    color: colors.text.primary,
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.6)',
-                  }}
-                >
-                  <div className="font-bold mb-1" style={{ color: colors.accent.red }}>
-                    Pit Stop {index + 1}
-                  </div>
-                  <div style={{ color: colors.text.secondary }}>
-                    Lap {stop.lap}
-                  </div>
-                  <div className="mt-1 pt-1 border-t" style={{ borderColor: colors.border.default }}>
-                    <div className="flex items-center gap-2">
-                      <span style={{ color: getTireColor(previousCompound) }}>{previousCompound}</span>
-                      <span style={{ color: colors.text.muted }}>→</span>
-                      <span style={{ color: getTireColor(newCompound) }}>{newCompound}</span>
-                    </div>
-                  </div>
-                  <div className="mt-1 text-xs" style={{ color: colors.text.muted }}>
-                    ~22-24s time loss
-                  </div>
-                </div>
-                </div>
-              </React.Fragment>
-            );
-          })}
-          </div>
-        </div>
-
-        {/* Compound labels below bar - Bracket style, aligned with segments */}
-        <div className="text-xs font-medium mt-2" style={{ color: colors.text.secondary }}>
-          <div className="flex font-mono">
-            {segments.map((segment, index) => {
-              const stintLength = segment.end - segment.start + 1;
-              const isFirst = index === 0;
-              const isLast = index === segments.length - 1;
-
-              return (
-                <div key={index} className="flex items-center justify-center" style={{ width: `${segment.width}%` }}>
-                  <div className="flex items-center">
-                    {isFirst && <span>└─</span>}
-                    {!isFirst && <span>─┐─</span>}
-                    <span className="px-1">
-                      {segment.compound} ({stintLength} laps)
-                    </span>
-                    {isLast && <span>─┘</span>}
-                  </div>
-                </div>
               );
             })}
           </div>
+        </div>
+
+        {/* Simple stint summary below */}
+        <div className="text-xs text-center" style={{ color: colors.text.secondary }}>
+          {segments.map((segment, index) => {
+            const stintLength = segment.end - segment.start + 1;
+            return (
+              <span key={index}>
+                {segment.compound} ({stintLength})
+                {index < segments.length - 1 && <span className="mx-2">→</span>}
+              </span>
+            );
+          })}
         </div>
 
         {/* Error indicator if laps don't match */}
