@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Strategy, TireCompound } from '@/lib/types';
 import { colors } from '@/lib/designSystem';
 
@@ -163,19 +163,24 @@ export default function TimelineStrategyBuilder({
                       width: `${segment.width}%`,
                       background: gradientStyle,
                       filter: 'brightness(1)',
-                      transition: 'filter 0.3s ease',
+                      transition: 'filter 0.2s ease',
                       cursor: 'pointer',
+                      // Add rounded corners to first and last segments
+                      borderTopLeftRadius: index === 0 ? '12px' : '0',
+                      borderBottomLeftRadius: index === 0 ? '12px' : '0',
+                      borderTopRightRadius: index === segments.length - 1 ? '12px' : '0',
+                      borderBottomRightRadius: index === segments.length - 1 ? '12px' : '0',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.filter = 'brightness(1.1)';
+                      e.currentTarget.style.filter = 'brightness(1.15)';
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.filter = 'brightness(1)';
                     }}
                   >
-                    <div className="text-sm font-semibold opacity-70" style={{
-                      color: segment.compound === 'HARD' ? colors.text.primary : colors.text.inverse,
-                      textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+                    <div className="text-sm font-semibold opacity-80" style={{
+                      color: segment.compound === 'HARD' ? '#1a1f2e' : colors.text.inverse,
+                      textShadow: segment.compound === 'HARD' ? 'none' : '0 1px 2px rgba(0, 0, 0, 0.3)',
                     }}>
                       {getTireLabel(segment.compound)}
                     </div>
@@ -207,7 +212,7 @@ export default function TimelineStrategyBuilder({
               })}
             </div>
 
-            {/* Pit stop markers - Downward arrows below bar */}
+            {/* Pit stop markers - Vertical divider inside + arrow below */}
             {strategy.pitStops.map((stop, index) => {
             const position = (stop.lap / totalLaps) * 100;
             // Determine old tire compound
@@ -217,34 +222,48 @@ export default function TimelineStrategyBuilder({
             const newCompound = stop.tireCompound;
 
             return (
-              <div
-                key={index}
-                className="absolute -translate-x-1/2 cursor-pointer group"
-                style={{
-                  left: `${position}%`,
-                  top: '100%',
-                  zIndex: 10,
-                  marginTop: '8px',
-                }}
-              >
-                {/* Downward Arrow */}
-                <div className="flex flex-col items-center">
-                  <div
-                    className="text-2xl transition-transform group-hover:scale-110"
-                    style={{
-                      color: colors.accent.red,
-                      filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
-                    }}
-                  >
-                    ↓
+              <React.Fragment key={index}>
+                {/* Vertical divider line inside the bar */}
+                <div
+                  className="absolute top-0 -translate-x-1/2 pointer-events-none"
+                  style={{
+                    left: `${position}%`,
+                    height: '100%',
+                    width: '3px',
+                    background: `linear-gradient(to bottom, ${colors.accent.red}, #ffffff)`,
+                    boxShadow: '0 0 8px rgba(239, 68, 68, 0.6)',
+                    zIndex: 5,
+                  }}
+                />
+
+                {/* Arrow and label below the bar */}
+                <div
+                  className="absolute -translate-x-1/2 cursor-pointer group"
+                  style={{
+                    left: `${position}%`,
+                    top: '100%',
+                    zIndex: 10,
+                    marginTop: '8px',
+                  }}
+                >
+                  {/* Downward Arrow */}
+                  <div className="flex flex-col items-center">
+                    <div
+                      className="text-2xl transition-transform group-hover:scale-110"
+                      style={{
+                        color: colors.accent.red,
+                        filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
+                      }}
+                    >
+                      ↓
+                    </div>
+                    {/* Pit label */}
+                    <div className="text-xs font-medium mt-1 whitespace-nowrap" style={{
+                      color: colors.text.secondary,
+                    }}>
+                      Pit Lap {stop.lap}
+                    </div>
                   </div>
-                  {/* Pit label */}
-                  <div className="text-xs font-medium mt-1 whitespace-nowrap" style={{
-                    color: colors.text.secondary,
-                  }}>
-                    Pit Lap {stop.lap}
-                  </div>
-                </div>
                 {/* Enhanced Tooltip */}
                 <div
                   className="absolute top-14 left-1/2 -translate-x-1/2 px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-xs pointer-events-none z-20"
@@ -272,29 +291,32 @@ export default function TimelineStrategyBuilder({
                     ~22-24s time loss
                   </div>
                 </div>
-              </div>
+                </div>
+              </React.Fragment>
             );
           })}
           </div>
         </div>
 
-        {/* Compound labels below bar - Bracket style */}
-        <div className="text-xs font-medium" style={{ color: colors.text.secondary }}>
-          <div className="flex items-center justify-center font-mono">
+        {/* Compound labels below bar - Bracket style, aligned with segments */}
+        <div className="text-xs font-medium mt-2" style={{ color: colors.text.secondary }}>
+          <div className="flex font-mono">
             {segments.map((segment, index) => {
               const stintLength = segment.end - segment.start + 1;
               const isFirst = index === 0;
               const isLast = index === segments.length - 1;
 
               return (
-                <span key={index} className="flex items-center" style={{ width: `${segment.width}%` }}>
-                  {isFirst && <span className="mr-1">└─</span>}
-                  {!isFirst && <span className="mx-1">─┐─</span>}
-                  <span className="flex-1 text-center">
-                    {segment.compound} ({stintLength} laps)
-                  </span>
-                  {isLast && <span className="ml-1">─┘</span>}
-                </span>
+                <div key={index} className="flex items-center justify-center" style={{ width: `${segment.width}%` }}>
+                  <div className="flex items-center">
+                    {isFirst && <span>└─</span>}
+                    {!isFirst && <span>─┐─</span>}
+                    <span className="px-1">
+                      {segment.compound} ({stintLength} laps)
+                    </span>
+                    {isLast && <span>─┘</span>}
+                  </div>
+                </div>
               );
             })}
           </div>
