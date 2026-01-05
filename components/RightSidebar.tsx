@@ -2,6 +2,7 @@
 
 import { RaceMode } from '@/lib/types';
 import { colors } from '@/lib/designSystem';
+import { getCircuitInfo, formatLapTime, getWeatherEmoji, getCircuitTypeEmoji } from '@/lib/circuitData';
 
 interface RightSidebarProps {
   isOpen: boolean;
@@ -71,86 +72,172 @@ export default function RightSidebar({
               Circuit Info
             </h2>
 
-            {selectedRace ? (
-              <div className="space-y-4">
-                {/* Circuit Overview */}
-                <div
-                  className="p-4 rounded-lg"
-                  style={{
-                    backgroundColor: colors.bg.card,
-                    border: `1px solid ${colors.border.default}`,
-                  }}
-                >
-                  <h3 className="text-sm font-semibold mb-2" style={{ color: colors.text.primary }}>
-                    {selectedRace}
-                  </h3>
-                  <div className="space-y-2 text-xs" style={{ color: colors.text.secondary }}>
-                    <div className="flex justify-between">
-                      <span>Lap Count:</span>
-                      <span style={{ color: colors.text.primary }}>57 laps</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Avg Lap Time:</span>
-                      <span style={{ color: colors.text.primary }}>1:30.000</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Pit Loss:</span>
-                      <span style={{ color: colors.text.primary }}>~22.2s</span>
+            {selectedRace ? (() => {
+              const circuitInfo = getCircuitInfo(selectedRace);
+
+              if (!circuitInfo) {
+                return (
+                  <div className="text-center py-12">
+                    <div className="text-4xl mb-4">🏁</div>
+                    <p className="text-sm" style={{ color: colors.text.secondary }}>
+                      Circuit information not available
+                    </p>
+                  </div>
+                );
+              }
+
+              const avgLapTime = formatLapTime(circuitInfo.baseLapTime);
+              const totalPitLoss = (circuitInfo.pitLaneTimeLoss + 2.2).toFixed(1); // pitlane + stationary
+              const weatherEmoji = getWeatherEmoji(circuitInfo.weather);
+              const circuitTypeEmoji = getCircuitTypeEmoji(circuitInfo.circuitType);
+
+              return (
+                <div className="space-y-4">
+                  {/* Circuit Overview */}
+                  <div
+                    className="p-4 rounded-lg"
+                    style={{
+                      backgroundColor: colors.bg.card,
+                      border: `1px solid ${colors.border.default}`,
+                    }}
+                  >
+                    <h3 className="text-sm font-bold mb-3" style={{ color: colors.text.primary }}>
+                      📍 {circuitInfo.fullName}
+                    </h3>
+                    <div className="space-y-2 text-xs" style={{ color: colors.text.secondary }}>
+                      <div className="flex justify-between">
+                        <span>🏁 Laps:</span>
+                        <span className="font-semibold" style={{ color: colors.text.primary }}>{circuitInfo.lapCount}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>⏱️ Avg Lap:</span>
+                        <span className="font-semibold" style={{ color: colors.text.primary }}>~{avgLapTime}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>🏎️ Pit Loss:</span>
+                        <span className="font-semibold" style={{ color: colors.text.primary }}>~{totalPitLoss}s</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>{weatherEmoji} Weather:</span>
+                        <span className="font-semibold" style={{ color: colors.text.primary }}>{circuitInfo.weather}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>🌡️ Temp:</span>
+                        <span className="font-semibold" style={{ color: colors.text.primary }}>{circuitInfo.temperature}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>{circuitTypeEmoji} Type:</span>
+                        <span className="font-semibold" style={{ color: colors.text.primary }}>{circuitInfo.circuitType}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Optimal Suggestions */}
-                <div
-                  className="p-4 rounded-lg"
-                  style={{
-                    backgroundColor: colors.accent.teal + '10',
-                    border: `1px solid ${colors.accent.teal}40`,
-                  }}
-                >
-                  <h3 className="text-sm font-semibold mb-2 flex items-center gap-2" style={{ color: colors.accent.teal }}>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    Optimal Strategy
-                  </h3>
-                  <p className="text-xs mb-3" style={{ color: colors.text.secondary }}>
-                    Based on historical data and tire degradation models:
-                  </p>
-                  <div className="space-y-2">
-                    <div
-                      className="p-2 rounded text-xs"
-                      style={{
-                        backgroundColor: colors.bg.sidebar,
-                        color: colors.text.primary,
-                      }}
-                    >
-                      <div className="font-medium">1-Stop Strategy</div>
-                      <div style={{ color: colors.text.secondary }}>Medium (L1-29) → Hard (L30-57)</div>
+                  {/* Circuit Characteristics */}
+                  <div
+                    className="p-4 rounded-lg"
+                    style={{
+                      backgroundColor: colors.accent.purple + '10',
+                      border: `1px solid ${colors.accent.purple}40`,
+                    }}
+                  >
+                    <h3 className="text-sm font-semibold mb-2" style={{ color: colors.accent.purple }}>
+                      ⚡ Circuit Characteristics
+                    </h3>
+                    <div className="space-y-1.5">
+                      {circuitInfo.characteristics.map((char, index) => (
+                        <div
+                          key={index}
+                          className="text-xs px-2 py-1 rounded"
+                          style={{
+                            backgroundColor: colors.bg.sidebar,
+                            color: colors.text.primary,
+                          }}
+                        >
+                          • {char}
+                        </div>
+                      ))}
                     </div>
                   </div>
-                </div>
 
-                {/* Strategy Tips */}
-                <div
-                  className="p-4 rounded-lg"
-                  style={{
-                    backgroundColor: colors.bg.card,
-                    border: `1px solid ${colors.border.default}`,
-                  }}
-                >
-                  <h3 className="text-sm font-semibold mb-2" style={{ color: colors.text.primary }}>
-                    💡 Strategy Tips
-                  </h3>
-                  <ul className="space-y-2 text-xs" style={{ color: colors.text.secondary }}>
-                    <li>• Medium tires optimal for 25-30 lap stints</li>
-                    <li>• Avoid soft tires for stints over 20 laps</li>
-                    <li>• Consider track evolution in race simulation</li>
-                    <li>• Pit window typically opens around lap 15-20</li>
-                  </ul>
+                  {/* Tire & Difficulty Info */}
+                  <div
+                    className="p-4 rounded-lg"
+                    style={{
+                      backgroundColor: colors.accent.teal + '10',
+                      border: `1px solid ${colors.accent.teal}40`,
+                    }}
+                  >
+                    <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: colors.accent.teal }}>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      Track Insights
+                    </h3>
+                    <div className="space-y-2 text-xs">
+                      <div className="flex justify-between">
+                        <span style={{ color: colors.text.secondary }}>Tire Wear:</span>
+                        <span
+                          className="font-semibold px-2 py-0.5 rounded"
+                          style={{
+                            backgroundColor: circuitInfo.tireWear === 'High'
+                              ? colors.accent.red + '30'
+                              : circuitInfo.tireWear === 'Medium'
+                              ? colors.accent.yellow + '30'
+                              : colors.accent.teal + '30',
+                            color: circuitInfo.tireWear === 'High'
+                              ? colors.accent.red
+                              : circuitInfo.tireWear === 'Medium'
+                              ? colors.accent.yellow
+                              : colors.accent.teal,
+                          }}
+                        >
+                          {circuitInfo.tireWear}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span style={{ color: colors.text.secondary }}>Difficulty:</span>
+                        <span
+                          className="font-semibold px-2 py-0.5 rounded"
+                          style={{
+                            backgroundColor: circuitInfo.difficulty === 'Very Hard' || circuitInfo.difficulty === 'Hard'
+                              ? colors.accent.red + '30'
+                              : circuitInfo.difficulty === 'Medium'
+                              ? colors.accent.yellow + '30'
+                              : colors.accent.teal + '30',
+                            color: circuitInfo.difficulty === 'Very Hard' || circuitInfo.difficulty === 'Hard'
+                              ? colors.accent.red
+                              : circuitInfo.difficulty === 'Medium'
+                              ? colors.accent.yellow
+                              : colors.accent.teal,
+                          }}
+                        >
+                          {circuitInfo.difficulty}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Strategy Tips */}
+                  <div
+                    className="p-4 rounded-lg"
+                    style={{
+                      backgroundColor: colors.bg.card,
+                      border: `1px solid ${colors.border.default}`,
+                    }}
+                  >
+                    <h3 className="text-sm font-semibold mb-2" style={{ color: colors.text.primary }}>
+                      💡 Strategy Tips
+                    </h3>
+                    <ul className="space-y-2 text-xs" style={{ color: colors.text.secondary }}>
+                      <li>• Soft: Optimal for 10-18 lap stints (ideal: 14 laps)</li>
+                      <li>• Medium: Optimal for 18-30 lap stints (ideal: 24 laps)</li>
+                      <li>• Hard: Optimal for 25-45 lap stints (ideal: 35 laps)</li>
+                      <li>• {circuitInfo.tireWear === 'High' ? 'High tire wear - shorter stints recommended' : circuitInfo.tireWear === 'Low' ? 'Low tire wear - longer stints possible' : 'Medium tire wear - standard strategy works'}</li>
+                    </ul>
+                  </div>
                 </div>
-              </div>
-            ) : (
+              );
+            })() : (
               <div className="text-center py-12">
                 <div className="text-4xl mb-4">🏁</div>
                 <p className="text-sm" style={{ color: colors.text.secondary }}>
