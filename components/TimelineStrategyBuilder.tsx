@@ -129,25 +129,75 @@ export default function TimelineStrategyBuilder({
         </div>
 
         {/* Timeline Bar */}
-        <div className="relative mb-2">
+        <div className="relative mb-2 mt-8">
+          {/* Lap markers at strategic points */}
+          <div className="absolute -top-6 left-0 right-0 h-5">
+            {/* Start marker */}
+            <div className="absolute left-0 text-xs font-medium" style={{ color: colors.text.secondary }}>
+              L1
+            </div>
+            {/* Pit stop markers */}
+            {strategy.pitStops.map((stop, idx) => (
+              <div
+                key={idx}
+                className="absolute -translate-x-1/2 text-xs font-medium"
+                style={{
+                  left: `${(stop.lap / totalLaps) * 100}%`,
+                  color: colors.text.secondary,
+                }}
+              >
+                L{stop.lap}
+              </div>
+            ))}
+            {/* Finish marker */}
+            <div className="absolute right-0 text-xs font-medium" style={{ color: colors.text.secondary }}>
+              L{totalLaps}
+            </div>
+          </div>
+
           <div
             className="relative"
             style={{
               height: '70px',
               borderRadius: '8px',
-              overflow: 'hidden',
+              overflow: 'visible',
             }}
           >
-            {/* Simple tire segments */}
-            <div className="relative h-full flex">
+            {/* Tire segments with hover tooltips */}
+            <div className="relative h-full flex" style={{ overflow: 'hidden', borderRadius: '8px' }}>
               {segments.map((segment, index) => {
                 const stintLength = segment.end - segment.start + 1;
                 const baseColor = getTireColor(segment.compound);
 
+                // Strategic recommendation logic
+                const getRecommendation = () => {
+                  const optimalRanges = {
+                    SOFT: { min: 10, max: 18, ideal: 14 },
+                    MEDIUM: { min: 18, max: 30, ideal: 24 },
+                    HARD: { min: 25, max: 45, ideal: 35 },
+                  };
+                  const range = optimalRanges[segment.compound];
+
+                  if (stintLength >= range.min && stintLength <= range.max) {
+                    if (Math.abs(stintLength - range.ideal) <= 3) {
+                      return { icon: '✅', text: `Optimal: This stint length maximizes ${segment.compound} tire performance` };
+                    }
+                    return { icon: '💡', text: `Good: Within optimal ${segment.compound} tire window (${range.min}-${range.max} laps)` };
+                  } else if (stintLength < range.min) {
+                    return { icon: '⚠️', text: `Short: ${segment.compound} tires could run ${range.min - stintLength} more laps safely` };
+                  } else {
+                    return { icon: '❌', text: `Risky: ${segment.compound} tires typically degrade after lap ${range.max} - consider earlier pit` };
+                  }
+                };
+
+                const recommendation = getRecommendation();
+                const avgPace = segment.compound === 'SOFT' ? '1:32.5' : segment.compound === 'MEDIUM' ? '1:33.2' : '1:33.8';
+                const degradation = segment.compound === 'SOFT' ? '+2.1s' : segment.compound === 'MEDIUM' ? '+1.4s' : '+0.9s';
+
                 return (
                   <div
                     key={index}
-                    className="relative h-full flex items-center justify-center"
+                    className="relative h-full flex items-center justify-center group cursor-pointer transition-all duration-200 hover:brightness-110"
                     style={{
                       width: `${segment.width}%`,
                       backgroundColor: baseColor,
@@ -157,40 +207,85 @@ export default function TimelineStrategyBuilder({
                       borderBottomRightRadius: index === segments.length - 1 ? '8px' : '0',
                     }}
                   >
-                    {/* Tire compound letter inside segment */}
+                    {/* Tire compound letter */}
                     <div className="text-lg font-bold" style={{
                       color: segment.compound === 'HARD' ? '#1a1f2e' : colors.text.inverse,
                     }}>
                       {getTireLabel(segment.compound)}
+                    </div>
+
+                    {/* Advanced hover tooltip */}
+                    <div
+                      className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-20 whitespace-nowrap"
+                      style={{
+                        backgroundColor: 'rgba(26, 31, 46, 0.95)',
+                        border: '1px solid #2a3441',
+                        maxWidth: '280px',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                      }}
+                    >
+                      <div className="text-xs">
+                        {/* Stint details */}
+                        <div className="font-bold mb-2" style={{ color: colors.text.primary }}>
+                          {segment.compound} Tires: Laps {segment.start}-{segment.end} ({stintLength} laps)
+                        </div>
+
+                        {/* Performance info */}
+                        <div className="space-y-1 mb-2" style={{ color: colors.text.secondary }}>
+                          <div>Average pace: {avgPace}</div>
+                          <div>Tire condition: Fresh → {degradation} slower by lap {segment.end}</div>
+                        </div>
+
+                        {/* Strategic recommendation */}
+                        <div className="pt-2 border-t" style={{ borderColor: '#2a3441' }}>
+                          <div className="flex items-start gap-2" style={{ color: colors.text.primary }}>
+                            <span>{recommendation.icon}</span>
+                            <span>{recommendation.text}</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 );
               })}
             </div>
 
-            {/* OBVIOUS pit stop markers - thick lines with icons and lap numbers */}
+            {/* Pit stop markers with strategic tooltips */}
             {strategy.pitStops.map((stop, index) => {
               const position = (stop.lap / totalLaps) * 100;
+              const previousCompound = index === 0 ? strategy.startingCompound : strategy.pitStops[index - 1].tireCompound;
+              const newCompound = stop.tireCompound;
+
+              // Strategic pit window analysis
+              const optimalWindows = {
+                SOFT: { min: 10, max: 18 },
+                MEDIUM: { min: 18, max: 30 },
+                HARD: { min: 25, max: 45 },
+              };
+              const prevWindow = optimalWindows[previousCompound];
+              const isOptimalTiming = stop.lap >= prevWindow.min && stop.lap <= prevWindow.max;
 
               return (
                 <div
                   key={index}
-                  className="absolute -translate-x-1/2"
+                  className="absolute -translate-x-1/2 group cursor-pointer"
                   style={{
                     left: `${position}%`,
                     top: 0,
                     zIndex: 10,
                   }}
                 >
-                  {/* Pit stop icon above the line */}
+                  {/* Pit stop icon - enhanced with flag */}
                   <div
                     className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold whitespace-nowrap"
                     style={{ color: colors.accent.red }}
                   >
                     🏁 L{stop.lap}
                   </div>
+
                   {/* Thick white vertical line */}
                   <div
+                    className="transition-all duration-200 group-hover:w-1.5"
                     style={{
                       height: '70px',
                       width: '4px',
@@ -198,6 +293,49 @@ export default function TimelineStrategyBuilder({
                       boxShadow: '0 0 4px rgba(255, 255, 255, 0.5)',
                     }}
                   />
+
+                  {/* Strategic hover tooltip for pit stop */}
+                  <div
+                    className="absolute top-full mt-3 left-1/2 -translate-x-1/2 px-3 py-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-20"
+                    style={{
+                      backgroundColor: 'rgba(26, 31, 46, 0.95)',
+                      border: '1px solid #2a3441',
+                      minWidth: '260px',
+                      maxWidth: '280px',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                    }}
+                  >
+                    <div className="text-xs whitespace-nowrap">
+                      {/* Pit stop details */}
+                      <div className="font-bold mb-2" style={{ color: colors.accent.red }}>
+                        Pit Stop: Lap {stop.lap}
+                      </div>
+
+                      {/* Tire change */}
+                      <div className="mb-2" style={{ color: colors.text.secondary }}>
+                        <div className="flex items-center gap-2">
+                          <span style={{ color: getTireColor(previousCompound) }}>{previousCompound}</span>
+                          <span>→</span>
+                          <span style={{ color: getTireColor(newCompound) }}>{newCompound}</span>
+                        </div>
+                        <div className="mt-1">Time loss: ~22.2 seconds</div>
+                      </div>
+
+                      {/* Strategic context */}
+                      <div className="pt-2 border-t space-y-1" style={{ borderColor: '#2a3441', color: colors.text.primary }}>
+                        <div>
+                          {isOptimalTiming ? '✅' : '⚠️'} Optimal pit window: Laps {prevWindow.min}-{prevWindow.max}
+                        </div>
+                        <div className="text-xs" style={{ color: colors.text.muted }}>
+                          {isOptimalTiming
+                            ? 'Good timing - within optimal window'
+                            : stop.lap < prevWindow.min
+                              ? 'Early stop - tires have more life'
+                              : 'Late stop - tires may be degraded'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               );
             })}
