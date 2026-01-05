@@ -16,7 +16,26 @@ export default function RightSidebar({
   currentMode,
   selectedRace,
 }: RightSidebarProps) {
-  if (!isOpen) return null;
+  // Show reopen button when closed
+  if (!isOpen) {
+    return (
+      <button
+        onClick={onToggle}
+        className="fixed right-0 top-6 w-8 h-16 rounded-l-lg flex items-center justify-center transition-all hover:w-10 z-40"
+        style={{
+          backgroundColor: colors.bg.card,
+          border: `1px solid ${colors.border.default}`,
+          borderRight: 'none',
+          color: colors.text.secondary,
+        }}
+        title="Open sidebar"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+    );
+  }
 
   return (
     <aside
@@ -30,7 +49,7 @@ export default function RightSidebar({
       {/* Close Button */}
       <button
         onClick={onToggle}
-        className="absolute -left-3 top-6 w-6 h-6 rounded-full flex items-center justify-center transition-colors"
+        className="absolute -left-3 top-6 w-6 h-6 rounded-full flex items-center justify-center transition-colors z-50"
         style={{
           backgroundColor: colors.bg.card,
           border: `1px solid ${colors.border.default}`,

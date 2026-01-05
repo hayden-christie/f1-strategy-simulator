@@ -12,8 +12,10 @@ import PostRaceAnalysis from '@/components/PostRaceAnalysis';
 import SavedPredictions from '@/components/SavedPredictions';
 import { F1SeasonData, F1Race } from '@/types/f1-data';
 import { Strategy, SimulationResult, RaceConfiguration, AdvancedRaceConfig, RaceMode } from '@/lib/types';
-import { simulateRace, simulateAdvancedRace, getPitLaneTimeLoss, createDefaultAdvancedConfig, Driver, hasDemoData, getDemoComparison, savePrediction, generatePredictionId, getAllPredictions } from '@/lib';
+import { simulateRace, simulateAdvancedRace, getPitLaneTimeLoss, createDefaultAdvancedConfig, hasDemoData, getDemoComparison, savePrediction, generatePredictionId, getAllPredictions } from '@/lib';
 import { getTotalLaps, getBaseLapTime } from '@/lib/raceData';
+import { generateOptimalStrategies } from '@/lib/strategyGenerator';
+import { F1_DRIVERS_2025, Driver } from '@/lib/driverTeamData';
 import { colors } from '@/lib/designSystem';
 import type { RacePrediction } from '@/lib/types';
 
@@ -26,14 +28,15 @@ export default function Home() {
   const [leftSidebarOpen, setLeftSidebarOpen] = useState(true);
   const [rightSidebarOpen, setRightSidebarOpen] = useState(true);
 
-  // Strategy management
-  const [strategy, setStrategy] = useState<Strategy>({
-    name: 'My Strategy',
+  // Multiple strategies support
+  const [strategies, setStrategies] = useState<Strategy[]>([{
+    name: 'Strategy A',
     startingCompound: 'MEDIUM',
     pitStops: [],
-  });
+  }]);
+  const [currentStrategyIndex, setCurrentStrategyIndex] = useState(0);
 
-  const [simulationResult, setSimulationResult] = useState<SimulationResult | null>(null);
+  const [simulationResults, setSimulationResults] = useState<SimulationResult[]>([]);
   const [isSimulating, setIsSimulating] = useState(false);
 
   // Advanced configuration
@@ -41,6 +44,7 @@ export default function Home() {
     createDefaultAdvancedConfig()
   );
   const [useAdvancedFeatures, setUseAdvancedFeatures] = useState(false);
+  const [advancedConfigOpen, setAdvancedConfigOpen] = useState(false);
 
   // Race mode
   const [raceMode, setRaceMode] = useState<RaceMode>('PRE_RACE');
@@ -73,17 +77,54 @@ export default function Home() {
 
   const handleRaceSelect = (race: F1Race) => {
     setSelectedRace(race);
-    setSimulationResult(null);
-    setStrategy({
-      name: 'My Strategy',
+    setSimulationResults([]);
+    setStrategies([{
+      name: 'Strategy A',
       startingCompound: 'MEDIUM',
       pitStops: [],
-    });
+    }]);
+    setCurrentStrategyIndex(0);
+  };
+
+  const addNewStrategy = () => {
+    if (strategies.length >= 3) {
+      alert('Maximum 3 strategies can be compared');
+      return;
+    }
+    const letters = ['A', 'B', 'C'];
+    setStrategies([...strategies, {
+      name: `Strategy ${letters[strategies.length]}`,
+      startingCompound: 'MEDIUM',
+      pitStops: [],
+    }]);
+    setCurrentStrategyIndex(strategies.length);
+  };
+
+  const removeStrategy = (index: number) => {
+    if (strategies.length === 1) {
+      alert('At least one strategy is required');
+      return;
+    }
+    const newStrategies = strategies.filter((_, i) => i !== index);
+    setStrategies(newStrategies);
+    if (currentStrategyIndex >= newStrategies.length) {
+      setCurrentStrategyIndex(Math.max(0, newStrategies.length - 1));
+    }
+  };
+
+  const loadOptimalStrategies = () => {
+    if (!selectedRace) return;
+
+    const totalLaps = getTotalLaps(selectedRace.name);
+    const optimal = generateOptimalStrategies(totalLaps, selectedRace.name);
+
+    setStrategies(optimal.slice(0, 3));
+    setCurrentStrategyIndex(0);
   };
 
   const runSimulation = () => {
-    if (!selectedRace) {
-      alert('Please select a race');
+    if (!selectedRace || strategies.length === 0) {
+      alert('Please select a race and create at least one strategy');
       return;
     }
 
@@ -107,21 +148,23 @@ export default function Home() {
         advanced: useAdvancedFeatures ? advancedConfig : undefined,
       };
 
-      const result = useAdvancedFeatures
-        ? simulateAdvancedRace(strategy, raceConfig)
-        : simulateRace(strategy, raceConfig);
-
-      setSimulationResult(result);
+      const results = strategies.map((strategy) =>
+        useAdvancedFeatures
+          ? simulateAdvancedRace(strategy, raceConfig)
+          : simulateRace(strategy, raceConfig)
+      );
+      setSimulationResults(results);
       setIsSimulating(false);
     }, 500);
   };
 
-  const handleSavePrediction = () => {
-    if (!selectedRace || !simulationResult) {
+  const handleSavePrediction = (resultIndex: number) => {
+    if (!selectedRace || !simulationResults[resultIndex]) {
       alert('No simulation result to save');
       return;
     }
 
+    const result = simulationResults[resultIndex];
     const totalLaps = getTotalLaps(selectedRace.name);
     const baseLapTime = getBaseLapTime(selectedRace.name);
 
@@ -130,8 +173,8 @@ export default function Home() {
       raceName: selectedRace.name,
       raceDate: selectedRace.date,
       savedAt: new Date(),
-      strategy: simulationResult.strategy,
-      simulationResult: simulationResult,
+      strategy: result.strategy,
+      simulationResult: result,
       driverId: selectedDriver?.id,
       teamId: selectedDriver?.teamId,
       raceConfig: {
@@ -154,7 +197,7 @@ export default function Home() {
     const predictions = getAllPredictions();
     setSavedPredictions(predictions);
 
-    alert(`✅ Prediction Saved Successfully!\n\nRace: ${selectedRace.name}\nStrategy: ${simulationResult.strategy.name}\nDriver: ${selectedDriver?.fullName || 'Not selected'}`);
+    alert(`✅ Prediction Saved!\n\nRace: ${selectedRace.name}\nStrategy: ${result.strategy.name}\nDriver: ${selectedDriver?.fullName || 'Not selected'}`);
   };
 
   const handlePredictionSelect = (prediction: RacePrediction) => {
@@ -203,7 +246,12 @@ export default function Home() {
         onToggle={() => setLeftSidebarOpen(!leftSidebarOpen)}
         currentMode={raceMode}
         onModeChange={setRaceMode}
-        selectedRace={selectedRace?.name || null}
+        selectedRace={selectedRace}
+        onRaceSelect={handleRaceSelect}
+        races={seasonData.races}
+        selectedDriver={selectedDriver}
+        onDriverSelect={setSelectedDriver}
+        drivers={F1_DRIVERS_2025}
         savedPredictions={savedPredictions}
       />
 
@@ -222,14 +270,14 @@ export default function Home() {
       >
         {/* Top Bar - Sticky */}
         <div
-          className="sticky top-0 z-30 p-4 border-b transition-all duration-300"
+          className="sticky top-0 z-30 px-4 py-3 border-b transition-all duration-300"
           style={{
             backgroundColor: colors.bg.sidebar,
             borderColor: colors.border.default,
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
           }}
         >
-          <div className="flex items-center justify-between max-w-[900px] mx-auto">
+          <div className="flex items-center justify-between max-w-[1200px] mx-auto">
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-sm" style={{ color: colors.text.secondary }}>
               <span style={{ color: colors.accent.teal }}>🏎️</span>
@@ -247,9 +295,19 @@ export default function Home() {
               {raceMode === 'PRE_RACE' && selectedRace && (
                 <>
                   <button
+                    onClick={loadOptimalStrategies}
+                    className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all hover:scale-105"
+                    style={{
+                      backgroundColor: colors.accent.purple,
+                      color: 'white',
+                    }}
+                  >
+                    Load Optimal
+                  </button>
+                  <button
                     onClick={runSimulation}
                     disabled={isSimulating}
-                    className="px-4 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{
                       backgroundColor: colors.accent.red,
                       color: 'white',
@@ -257,17 +315,23 @@ export default function Home() {
                   >
                     {isSimulating ? 'Simulating...' : 'Run Simulation'}
                   </button>
-                  {simulationResult && (
-                    <button
-                      onClick={handleSavePrediction}
-                      className="px-4 py-2 rounded-lg text-sm font-medium transition-all hover:scale-105"
-                      style={{
-                        backgroundColor: colors.accent.teal,
-                        color: 'white',
-                      }}
-                    >
-                      Save Prediction
-                    </button>
+                  {simulationResults.length > 0 && (
+                    <div className="flex gap-1">
+                      {simulationResults.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => handleSavePrediction(index)}
+                          className="px-2 py-1.5 rounded-lg text-xs font-medium transition-all hover:scale-105"
+                          style={{
+                            backgroundColor: colors.accent.teal,
+                            color: 'white',
+                          }}
+                          title={`Save ${strategies[index].name}`}
+                        >
+                          💾 {index + 1}
+                        </button>
+                      ))}
+                    </div>
                   )}
                 </>
               )}
@@ -276,61 +340,132 @@ export default function Home() {
         </div>
 
         {/* Main Content Area */}
-        <div className="p-6 max-w-[900px] mx-auto space-y-6">
+        <div className="p-4 max-w-[1200px] mx-auto space-y-4">
           {/* Pre-Race Mode */}
           {raceMode === 'PRE_RACE' && selectedRace && (
             <>
-              {/* Strategy Builder */}
-              <TimelineStrategyBuilder
-                strategy={strategy}
-                totalLaps={getTotalLaps(selectedRace.name)}
-                onUpdateStrategy={setStrategy}
-              />
-
-              {/* Advanced Configuration */}
+              {/* Strategy Builder with Tabs */}
               <div
-                className="p-6 rounded-lg"
+                className="p-4 rounded-lg"
                 style={{
                   backgroundColor: colors.bg.card,
                   border: `1px solid ${colors.border.default}`,
                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
                 }}
               >
-                <AdvancedConfig
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-base font-bold" style={{ color: colors.text.primary }}>
+                    Strategy Builder ({strategies.length}/3)
+                  </h3>
+                  <button
+                    onClick={addNewStrategy}
+                    disabled={strategies.length >= 3}
+                    className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all hover:scale-105 disabled:opacity-50"
+                    style={{
+                      backgroundColor: colors.accent.teal,
+                      color: 'white',
+                    }}
+                  >
+                    + Add Strategy
+                  </button>
+                </div>
+
+                {/* Strategy Tabs */}
+                {strategies.length > 1 && (
+                  <div className="flex gap-1 mb-3 overflow-x-auto">
+                    {strategies.map((strategy, index) => (
+                      <div key={index} className="relative group">
+                        <button
+                          onClick={() => setCurrentStrategyIndex(index)}
+                          className={`px-3 py-1.5 rounded-t-lg text-xs font-bold transition-all ${
+                            currentStrategyIndex === index ? '' : 'opacity-60 hover:opacity-80'
+                          }`}
+                          style={{
+                            backgroundColor: currentStrategyIndex === index ? colors.accent.blue : colors.bg.input,
+                            color: colors.text.primary,
+                          }}
+                        >
+                          {strategy.name}
+                        </button>
+                        {strategies.length > 1 && (
+                          <button
+                            onClick={() => removeStrategy(index)}
+                            className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            style={{
+                              backgroundColor: colors.accent.red,
+                              color: 'white',
+                            }}
+                            title="Remove strategy"
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <TimelineStrategyBuilder
+                  strategy={strategies[currentStrategyIndex]}
                   totalLaps={getTotalLaps(selectedRace.name)}
-                  config={advancedConfig}
-                  onChange={(newConfig) => {
-                    setAdvancedConfig(newConfig);
-                    const hasAnyFeature =
-                      newConfig.enableWeather ||
-                      newConfig.enableSafetyCar ||
-                      newConfig.enableTireAllocation ||
-                      newConfig.enableTraffic ||
-                      newConfig.enhancedFuelEffect;
-                    setUseAdvancedFeatures(hasAnyFeature);
+                  onUpdateStrategy={(newStrategy) => {
+                    const newStrategies = [...strategies];
+                    newStrategies[currentStrategyIndex] = newStrategy;
+                    setStrategies(newStrategies);
                   }}
                 />
               </div>
 
-              {/* Simulation Results */}
-              {simulationResult && (
-                <div className="space-y-6">
-                  <div
-                    className="p-6 rounded-lg"
-                    style={{
-                      backgroundColor: colors.bg.card,
-                      border: `1px solid ${colors.border.default}`,
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
-                    }}
+              {/* Advanced Configuration - Collapsible */}
+              <div
+                className="p-3 rounded-lg"
+                style={{
+                  backgroundColor: colors.bg.card,
+                  border: `1px solid ${colors.border.default}`,
+                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+                }}
+              >
+                <button
+                  onClick={() => setAdvancedConfigOpen(!advancedConfigOpen)}
+                  className="w-full flex items-center justify-between text-sm font-semibold transition-colors hover:opacity-80"
+                  style={{ color: colors.text.primary }}
+                >
+                  <span>⚙️ Advanced Configuration</span>
+                  <svg
+                    className={`w-4 h-4 transition-transform ${advancedConfigOpen ? 'rotate-180' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    <h3 className="text-lg font-bold mb-4" style={{ color: colors.text.primary }}>
-                      Simulation Results
-                    </h3>
-                    <ResultsDisplay result={simulationResult} />
-                  </div>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
 
-                  <LapTimeChart results={[simulationResult]} />
-                  <StrategyComparison results={[simulationResult]} />
+                {advancedConfigOpen && (
+                  <div className="mt-3 pt-3 border-t" style={{ borderColor: colors.border.default }}>
+                    <AdvancedConfig
+                      totalLaps={getTotalLaps(selectedRace.name)}
+                      config={advancedConfig}
+                      onChange={(newConfig) => {
+                        setAdvancedConfig(newConfig);
+                        const hasAnyFeature =
+                          newConfig.enableWeather ||
+                          newConfig.enableSafetyCar ||
+                          newConfig.enableTireAllocation ||
+                          newConfig.enableTraffic ||
+                          newConfig.enhancedFuelEffect;
+                        setUseAdvancedFeatures(hasAnyFeature);
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Simulation Results */}
+              {simulationResults.length > 0 && (
+                <div className="space-y-4">
+                  <LapTimeChart results={simulationResults} />
+                  <StrategyComparison results={simulationResults} />
                 </div>
               )}
             </>
