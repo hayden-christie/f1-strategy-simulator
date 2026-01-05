@@ -104,75 +104,78 @@ export default function TimelineStrategyBuilder({
 
   return (
     <div className="space-y-6">
-      {/* Timeline View */}
+      {/* Timeline View - Modern Dashboard Style */}
       <div
-        className="p-6 rounded-lg"
+        className="p-6 rounded-xl"
         style={{
           backgroundColor: colors.bg.card,
           border: `1px solid ${colors.border.default}`,
           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
         }}
       >
-        <h3 className="text-lg font-bold mb-6" style={{ color: colors.text.primary }}>
-          Race Timeline
-        </h3>
-
-        {/* Lap markers - Above timeline */}
-        <div className="relative h-5 mb-2" style={{ color: colors.text.secondary }}>
-          <div className="flex justify-between text-xs font-mono">
-            <span>Lap 1</span>
-            <span>Lap {Math.floor(totalLaps / 2)}</span>
-            <span>Lap {totalLaps}</span>
+        {/* Header - Race Progress */}
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-semibold" style={{ color: colors.text.secondary }}>
+            Race Progress
+          </h3>
+          <div className="flex items-center gap-2 text-sm font-medium" style={{ color: colors.text.primary }}>
+            <span>🏁</span>
+            <span>{totalLapsCovered}/{totalLaps} Laps</span>
           </div>
         </div>
 
-        {/* Timeline Bar Container */}
-        <div className="relative mb-6">
-          {/* Timeline Bar with padding and rounded corners */}
+        {/* Modern Progress Bar Container */}
+        <div className="relative mb-4">
+          {/* Continuous Progress Bar */}
           <div
-            className="rounded-lg p-3"
+            className="relative overflow-hidden"
             style={{
-              backgroundColor: colors.bg.input,
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+              height: '85px',
+              borderRadius: '12px',
+              backgroundColor: colors.bg.sidebar,
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.25)',
             }}
           >
-            {/* Background track */}
-            <div
-              className="relative rounded-lg overflow-hidden"
-              style={{
-                height: '100px',
-                backgroundColor: colors.bg.sidebar,
-                border: `1px solid ${colors.border.default}`,
-                boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.3)',
-              }}
-            >
-            {/* Stint segments */}
+            {/* Flowing tire segments */}
             <div className="relative h-full flex">
               {segments.map((segment, index) => {
                 const stintLength = segment.end - segment.start + 1;
                 const baseColor = getTireColor(segment.compound);
+                const nextSegment = segments[index + 1];
+                const nextColor = nextSegment ? getTireColor(nextSegment.compound) : baseColor;
+
+                // Create smooth gradient blend with next segment
+                const hasNextSegment = index < segments.length - 1;
+                const gradientStyle = hasNextSegment
+                  ? `linear-gradient(to right,
+                      ${baseColor}f0 0%,
+                      ${baseColor} 45%,
+                      ${baseColor} 85%,
+                      ${baseColor}cc 95%,
+                      ${nextColor}80 100%)`
+                  : `linear-gradient(to bottom, ${baseColor}f5 0%, ${baseColor} 100%)`;
 
                 return (
                   <div
                     key={index}
-                    className="relative h-full flex items-center justify-center transition-all duration-200 group"
+                    className="relative h-full flex items-center justify-center group"
                     style={{
                       width: `${segment.width}%`,
-                      background: `linear-gradient(to bottom, ${baseColor}dd, ${baseColor})`,
-                      borderRight: index < segments.length - 1 ? `1px solid rgba(255, 255, 255, 0.2)` : 'none',
+                      background: gradientStyle,
                       filter: 'brightness(1)',
-                      transition: 'filter 0.2s ease',
+                      transition: 'filter 0.3s ease',
+                      cursor: 'pointer',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.filter = 'brightness(1.15)';
+                      e.currentTarget.style.filter = 'brightness(1.1)';
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.filter = 'brightness(1)';
                     }}
                   >
-                    <div className="text-base font-bold" style={{
-                      color: colors.text.inverse,
-                      textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                    <div className="text-sm font-semibold opacity-70" style={{
+                      color: segment.compound === 'HARD' ? colors.text.primary : colors.text.inverse,
+                      textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
                     }}>
                       {getTireLabel(segment.compound)}
                     </div>
@@ -204,7 +207,7 @@ export default function TimelineStrategyBuilder({
               })}
             </div>
 
-            {/* Pit stop markers */}
+            {/* Pit stop markers - Downward arrows below bar */}
             {strategy.pitStops.map((stop, index) => {
             const position = (stop.lap / totalLaps) * 100;
             // Determine old tire compound
@@ -219,30 +222,28 @@ export default function TimelineStrategyBuilder({
                 className="absolute -translate-x-1/2 cursor-pointer group"
                 style={{
                   left: `${position}%`,
-                  top: '12px',
-                  height: '100px',
+                  top: '100%',
                   zIndex: 10,
+                  marginTop: '8px',
                 }}
               >
-                {/* Vertical Line Marker with Flag */}
-                <div className="relative h-full flex flex-col items-center">
-                  {/* Flag Icon at top */}
+                {/* Downward Arrow */}
+                <div className="flex flex-col items-center">
                   <div
-                    className="text-xl mb-1 transition-transform group-hover:scale-110"
+                    className="text-2xl transition-transform group-hover:scale-110"
                     style={{
-                      filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5))',
+                      color: colors.accent.red,
+                      filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
                     }}
                   >
-                    🏁
+                    ↓
                   </div>
-                  {/* Vertical line */}
-                  <div
-                    className="w-1 flex-1 transition-all group-hover:w-1.5"
-                    style={{
-                      background: `linear-gradient(to bottom, ${colors.accent.red}, #ffffff)`,
-                      boxShadow: '0 0 8px rgba(239, 68, 68, 0.5)',
-                    }}
-                  />
+                  {/* Pit label */}
+                  <div className="text-xs font-medium mt-1 whitespace-nowrap" style={{
+                    color: colors.text.secondary,
+                  }}>
+                    Pit Lap {stop.lap}
+                  </div>
                 </div>
                 {/* Enhanced Tooltip */}
                 <div
@@ -278,45 +279,43 @@ export default function TimelineStrategyBuilder({
           </div>
         </div>
 
-        {/* Lap coverage indicator - Styled as compact badge */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div
-              className="px-3 py-1 rounded-full text-xs font-medium font-mono"
-              style={{
-                backgroundColor: colors.bg.input,
-                color: colors.text.secondary,
-                border: `1px solid ${colors.border.default}`,
-              }}
-            >
-              Racing: <span style={{ color: colors.text.primary, fontWeight: 'bold' }}>{totalLapsCovered}</span>/{totalLaps} laps
-            </div>
-            {pitLapsCount > 0 && (
-              <div
-                className="px-3 py-1 rounded-full text-xs font-medium font-mono"
-                style={{
-                  backgroundColor: colors.accent.red + '20',
-                  color: colors.accent.red,
-                  border: `1px solid ${colors.accent.red}`,
-                }}
-              >
-                Pit: {pitLapsCount} lap{pitLapsCount !== 1 ? 's' : ''}
-              </div>
-            )}
+        {/* Compound labels below bar - Bracket style */}
+        <div className="text-xs font-medium" style={{ color: colors.text.secondary }}>
+          <div className="flex items-center justify-center font-mono">
+            {segments.map((segment, index) => {
+              const stintLength = segment.end - segment.start + 1;
+              const isFirst = index === 0;
+              const isLast = index === segments.length - 1;
+
+              return (
+                <span key={index} className="flex items-center" style={{ width: `${segment.width}%` }}>
+                  {isFirst && <span className="mr-1">└─</span>}
+                  {!isFirst && <span className="mx-1">─┐─</span>}
+                  <span className="flex-1 text-center">
+                    {segment.compound} ({stintLength} laps)
+                  </span>
+                  {isLast && <span className="ml-1">─┘</span>}
+                </span>
+              );
+            })}
           </div>
-          {uncoveredLaps !== 0 && (
+        </div>
+
+        {/* Error indicator if laps don't match */}
+        {uncoveredLaps !== 0 && (
+          <div className="mt-3 flex justify-center">
             <div
               className="px-3 py-1 rounded-full text-xs font-medium"
               style={{
-                backgroundColor: colors.accent.red + '30',
+                backgroundColor: colors.accent.red + '20',
                 color: colors.accent.red,
                 border: `1px solid ${colors.accent.red}`,
               }}
             >
               ⚠ {Math.abs(uncoveredLaps)} lap{Math.abs(uncoveredLaps) !== 1 ? 's' : ''} {uncoveredLaps > 0 ? 'missing' : 'over'}
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* List View */}
