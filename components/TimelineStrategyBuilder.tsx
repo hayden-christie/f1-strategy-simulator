@@ -24,13 +24,19 @@ export default function TimelineStrategyBuilder({
   };
 
   // Calculate stint segments for timeline
+  // FIXED: Pit stops happen AT END of a lap, not as separate laps
+  // Example: 56 lap race, pit on lap 17 and 35
+  // - Stint 1: Laps 1-17 (17 laps, pit at END of lap 17)
+  // - Stint 2: Laps 18-35 (18 laps, pit at END of lap 35)
+  // - Stint 3: Laps 36-56 (21 laps)
+  // Total: 17 + 18 + 21 = 56 laps ✓
   const getStintSegments = () => {
     const segments = [];
     let currentLap = 1;
     let currentCompound = strategy.startingCompound;
 
-    // First stint
-    const firstStintEnd = strategy.pitStops.length > 0 ? strategy.pitStops[0].lap - 1 : totalLaps;
+    // First stint - ends ON the pit stop lap (not lap before)
+    const firstStintEnd = strategy.pitStops.length > 0 ? strategy.pitStops[0].lap : totalLaps;
     segments.push({
       start: currentLap,
       end: firstStintEnd,
@@ -38,12 +44,12 @@ export default function TimelineStrategyBuilder({
       width: ((firstStintEnd - currentLap + 1) / totalLaps) * 100,
     });
 
-    // Remaining stints
+    // Remaining stints - start AFTER pit stop lap
     strategy.pitStops.forEach((stop, index) => {
       currentLap = stop.lap + 1;
       currentCompound = stop.tireCompound;
       const nextStop = strategy.pitStops[index + 1];
-      const stintEnd = nextStop ? nextStop.lap - 1 : totalLaps;
+      const stintEnd = nextStop ? nextStop.lap : totalLaps;
 
       segments.push({
         start: currentLap,
@@ -58,7 +64,7 @@ export default function TimelineStrategyBuilder({
 
   const segments = getStintSegments();
 
-  // Calculate total laps covered (excluding pit laps)
+  // Calculate total laps covered (should equal totalLaps)
   const getTotalLapsCovered = () => {
     return segments.reduce((total, segment) => {
       return total + (segment.end - segment.start + 1);
@@ -66,8 +72,7 @@ export default function TimelineStrategyBuilder({
   };
 
   const totalLapsCovered = getTotalLapsCovered();
-  const pitLapsCount = strategy.pitStops.length;
-  const uncoveredLaps = totalLaps - totalLapsCovered - pitLapsCount;
+  const uncoveredLaps = totalLaps - totalLapsCovered;
 
   const addPitStop = () => {
     const lastPitLap = strategy.pitStops.length > 0
@@ -123,12 +128,12 @@ export default function TimelineStrategyBuilder({
           </div>
         </div>
 
-        {/* Simple Timeline Bar */}
+        {/* Timeline Bar */}
         <div className="relative mb-2">
           <div
             className="relative"
             style={{
-              height: '60px',
+              height: '70px',
               borderRadius: '8px',
               overflow: 'hidden',
             }}
@@ -163,22 +168,37 @@ export default function TimelineStrategyBuilder({
               })}
             </div>
 
-            {/* Simple pit stop markers - white vertical lines */}
+            {/* OBVIOUS pit stop markers - thick lines with icons and lap numbers */}
             {strategy.pitStops.map((stop, index) => {
               const position = (stop.lap / totalLaps) * 100;
 
               return (
                 <div
                   key={index}
-                  className="absolute top-0 -translate-x-1/2"
+                  className="absolute -translate-x-1/2"
                   style={{
                     left: `${position}%`,
-                    height: '100%',
-                    width: '2px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                    zIndex: 5,
+                    top: 0,
+                    zIndex: 10,
                   }}
-                />
+                >
+                  {/* Pit stop icon above the line */}
+                  <div
+                    className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold whitespace-nowrap"
+                    style={{ color: colors.accent.red }}
+                  >
+                    🏁 L{stop.lap}
+                  </div>
+                  {/* Thick white vertical line */}
+                  <div
+                    style={{
+                      height: '70px',
+                      width: '4px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                      boxShadow: '0 0 4px rgba(255, 255, 255, 0.5)',
+                    }}
+                  />
+                </div>
               );
             })}
           </div>
