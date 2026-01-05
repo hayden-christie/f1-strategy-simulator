@@ -28,9 +28,6 @@ export default function Home() {
   const [leftSidebarOpen, setLeftSidebarOpen] = useState(true);
   const [rightSidebarOpen, setRightSidebarOpen] = useState(true);
 
-  // Mobile menu state
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   // Multiple strategies support
   const [strategies, setStrategies] = useState<Strategy[]>([{
     name: 'Strategy A',
@@ -218,19 +215,10 @@ export default function Home() {
 
   // Calculate main content margin based on sidebar states
   const getMainMargin = () => {
-    // On mobile, no margins (full width)
-    // On desktop, respect sidebar states
-    return {
-      marginLeft: 'var(--main-margin-left, 0px)',
-      marginRight: 'var(--main-margin-right, 0px)',
-    };
+    const leftMargin = leftSidebarOpen ? '280px' : '64px';
+    const rightMargin = rightSidebarOpen ? '320px' : '0px';
+    return { marginLeft: leftMargin, marginRight: rightMargin };
   };
-
-  // Dynamic CSS variables for responsive margins
-  const mainMarginStyle = {
-    '--main-margin-left': leftSidebarOpen ? '280px' : '64px',
-    '--main-margin-right': rightSidebarOpen ? '320px' : '0px',
-  } as React.CSSProperties;
 
   if (!seasonData) {
     return (
@@ -252,63 +240,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: colors.bg.main }}>
-      {/* Mobile Navigation Bar - Only visible on mobile */}
-      <div
-        className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4"
-        style={{
-          height: '56px',
-          backgroundColor: colors.bg.sidebar,
-          borderBottom: `1px solid ${colors.border.default}`,
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
-        }}
-      >
-        {/* Hamburger Menu Button */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="w-11 h-11 flex items-center justify-center rounded-lg transition-colors"
-          style={{
-            backgroundColor: mobileMenuOpen ? colors.accent.teal + '30' : colors.bg.input,
-            border: `1px solid ${colors.border.default}`,
-            color: colors.text.primary,
-          }}
-          aria-label="Toggle menu"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
-          </svg>
-        </button>
-
-        {/* Title */}
-        <h1 className="text-base font-bold" style={{ color: colors.text.primary }}>
-          🏎️ F1 Strategy
-        </h1>
-
-        {/* Settings Icon */}
-        {raceMode === 'PRE_RACE' && selectedRace && (
-          <button
-            onClick={() => setAdvancedConfigOpen(!advancedConfigOpen)}
-            className="w-11 h-11 flex items-center justify-center rounded-lg transition-colors"
-            style={{
-              backgroundColor: useAdvancedFeatures ? colors.accent.yellow : colors.bg.input,
-              border: `1px solid ${colors.border.default}`,
-              color: useAdvancedFeatures ? colors.text.inverse : colors.text.primary,
-            }}
-            aria-label="Settings"
-          >
-            ⚙️
-          </button>
-        )}
-      </div>
-
-      {/* Mobile Menu Backdrop */}
-      {mobileMenuOpen && (
-        <div
-          className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
-          style={{ top: '56px' }}
-          onClick={() => setMobileMenuOpen(false)}
-        />
-      )}
-
       {/* Left Sidebar */}
       <LeftSidebar
         isOpen={leftSidebarOpen}
@@ -323,8 +254,6 @@ export default function Home() {
         drivers={F1_DRIVERS_2025}
         teams={F1_TEAMS_2025}
         savedPredictions={savedPredictions}
-        mobileMenuOpen={mobileMenuOpen}
-        onMobileMenuClose={() => setMobileMenuOpen(false)}
       />
 
       {/* Right Sidebar */}
@@ -335,15 +264,14 @@ export default function Home() {
         selectedRace={selectedRace?.name || null}
       />
 
-      {/* Main Content - Full width on mobile, margins on desktop */}
+      {/* Main Content */}
       <main
-        className={`min-h-screen transition-all duration-300 ease-in-out ${
-          leftSidebarOpen ? 'with-left-sidebar-open' : 'with-left-sidebar-collapsed'
-        } ${rightSidebarOpen ? 'with-right-sidebar-open' : ''}`}
+        className="min-h-screen transition-all duration-300 ease-in-out"
+        style={getMainMargin()}
       >
-        {/* Top Bar - Sticky (Hidden on mobile, replaced by mobile nav bar) */}
+        {/* Top Bar - Sticky */}
         <div
-          className="hidden md:block sticky top-0 z-30 px-4 py-3 border-b transition-all duration-300"
+          className="sticky top-0 z-30 px-4 py-3 border-b transition-all duration-300"
           style={{
             backgroundColor: colors.bg.sidebar,
             borderColor: colors.border.default,
@@ -471,7 +399,7 @@ export default function Home() {
         )}
 
         {/* Main Content Area */}
-        <div className="pt-[60px] md:pt-0 p-3 md:p-4 max-w-[1200px] mx-auto space-y-3 md:space-y-4">
+        <div className="p-4 max-w-[1200px] mx-auto space-y-4">
           {/* Pre-Race Mode */}
           {raceMode === 'PRE_RACE' && selectedRace && (
             <>

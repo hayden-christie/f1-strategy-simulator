@@ -19,8 +19,6 @@ interface LeftSidebarProps {
   drivers: Driver[];
   teams: Record<string, Team>;
   savedPredictions: any[];
-  mobileMenuOpen?: boolean;
-  onMobileMenuClose?: () => void;
 }
 
 export default function LeftSidebar({
@@ -36,28 +34,23 @@ export default function LeftSidebar({
   drivers,
   teams,
   savedPredictions,
-  mobileMenuOpen = false,
-  onMobileMenuClose,
 }: LeftSidebarProps) {
   const [raceDropdownOpen, setRaceDropdownOpen] = useState(false);
   const [driverDropdownOpen, setDriverDropdownOpen] = useState(false);
 
   return (
     <aside
-      className="fixed left-0 transition-all duration-300 ease-in-out z-40 overflow-y-auto md:translate-x-0"
+      className="fixed left-0 top-0 h-full transition-all duration-300 ease-in-out z-40 overflow-y-auto"
       style={{
         width: isOpen ? '280px' : '64px',
         backgroundColor: colors.bg.sidebar,
         borderRight: `1px solid ${colors.border.default}`,
-        top: '56px',
-        height: 'calc(100vh - 56px)',
-        transform: mobileMenuOpen ? 'translateX(0)' : 'translateX(-100%)',
       }}
     >
-      {/* Toggle Button - Desktop only */}
+      {/* Toggle Button */}
       <button
         onClick={onToggle}
-        className="hidden md:flex absolute -right-3 top-6 w-6 h-6 rounded-full items-center justify-center transition-colors z-50"
+        className="absolute -right-3 top-6 w-6 h-6 rounded-full flex items-center justify-center transition-colors z-50"
         style={{
           backgroundColor: colors.bg.card,
           border: `1px solid ${colors.border.default}`,
@@ -75,24 +68,6 @@ export default function LeftSidebar({
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
       </button>
-
-      {/* Close Button - Mobile only */}
-      {mobileMenuOpen && onMobileMenuClose && (
-        <button
-          onClick={onMobileMenuClose}
-          className="md:hidden absolute right-4 top-4 w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
-          style={{
-            backgroundColor: colors.bg.card,
-            border: `1px solid ${colors.border.default}`,
-            color: colors.text.primary,
-          }}
-          aria-label="Close menu"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      )}
 
       {/* Sidebar Content */}
       <div className="h-full p-4 pb-20">
@@ -151,7 +126,6 @@ export default function LeftSidebar({
                         onClick={() => {
                           onRaceSelect(race);
                           setRaceDropdownOpen(false);
-                          onMobileMenuClose?.();
                         }}
                         className="w-full p-2.5 text-left hover:opacity-80 transition-opacity"
                         style={{
@@ -270,7 +244,6 @@ export default function LeftSidebar({
                       onClick={() => {
                         onDriverSelect(null);
                         setDriverDropdownOpen(false);
-                        onMobileMenuClose?.();
                       }}
                       className="w-full p-2.5 text-left hover:opacity-80 transition-opacity"
                       style={{
@@ -290,7 +263,6 @@ export default function LeftSidebar({
                           onClick={() => {
                             onDriverSelect(driver);
                             setDriverDropdownOpen(false);
-                            onMobileMenuClose?.();
                           }}
                           className="w-full p-2.5 text-left hover:opacity-80 transition-opacity"
                           style={{
@@ -349,10 +321,7 @@ export default function LeftSidebar({
             ].map(({ mode, label, icon, color }) => (
               <button
                 key={mode}
-                onClick={() => {
-                  onModeChange(mode);
-                  onMobileMenuClose?.();
-                }}
+                onClick={() => onModeChange(mode)}
                 className="w-full flex items-center gap-3 p-2.5 rounded-lg transition-all duration-200"
                 style={{
                   backgroundColor: currentMode === mode ? color + '20' : 'transparent',
