@@ -58,6 +58,17 @@ export default function TimelineStrategyBuilder({
 
   const segments = getStintSegments();
 
+  // Calculate total laps covered (excluding pit laps)
+  const getTotalLapsCovered = () => {
+    return segments.reduce((total, segment) => {
+      return total + (segment.end - segment.start + 1);
+    }, 0);
+  };
+
+  const totalLapsCovered = getTotalLapsCovered();
+  const pitLapsCount = strategy.pitStops.length;
+  const uncoveredLaps = totalLaps - totalLapsCovered - pitLapsCount;
+
   const addPitStop = () => {
     const lastPitLap = strategy.pitStops.length > 0
       ? Math.max(...strategy.pitStops.map(ps => ps.lap))
@@ -118,28 +129,59 @@ export default function TimelineStrategyBuilder({
           >
             {/* Stint segments */}
             <div className="relative h-full flex">
-              {segments.map((segment, index) => (
-                <div
-                  key={index}
-                  className="relative h-full flex items-center justify-center transition-all duration-200 hover:opacity-90"
-                  style={{
-                    width: `${segment.width}%`,
-                    backgroundColor: getTireColor(segment.compound),
-                    borderRight: index < segments.length - 1 ? `2px solid ${colors.bg.card}` : 'none',
-                  }}
-                  title={`Laps ${segment.start}-${segment.end}: ${segment.compound}`}
-                >
-                  <div className="text-sm font-bold" style={{ color: colors.text.inverse }}>
-                    {getTireLabel(segment.compound)}
+              {segments.map((segment, index) => {
+                const stintLength = segment.end - segment.start + 1;
+                return (
+                  <div
+                    key={index}
+                    className="relative h-full flex items-center justify-center transition-all duration-200 hover:opacity-90 group"
+                    style={{
+                      width: `${segment.width}%`,
+                      backgroundColor: getTireColor(segment.compound),
+                      borderRight: index < segments.length - 1 ? `2px solid ${colors.bg.card}` : 'none',
+                    }}
+                  >
+                    <div className="text-sm font-bold" style={{ color: colors.text.inverse }}>
+                      {getTireLabel(segment.compound)}
+                    </div>
+                    {/* Enhanced Tooltip */}
+                    <div
+                      className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-xs pointer-events-none z-20"
+                      style={{
+                        backgroundColor: colors.bg.sidebar,
+                        border: `2px solid ${getTireColor(segment.compound)}`,
+                        color: colors.text.primary,
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.6)',
+                      }}
+                    >
+                      <div className="font-bold mb-1">{segment.compound} Tires</div>
+                      <div style={{ color: colors.text.secondary }}>
+                        Laps {segment.start} - {segment.end}
+                      </div>
+                      <div style={{ color: colors.text.secondary }}>
+                        Stint Length: {stintLength} laps
+                      </div>
+                      <div className="mt-1 pt-1 border-t" style={{ borderColor: colors.border.default }}>
+                        <div className="text-xs" style={{ color: colors.text.muted }}>
+                          Degradation increases over stint
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
           {/* Pit stop markers */}
           {strategy.pitStops.map((stop, index) => {
             const position = (stop.lap / totalLaps) * 100;
+            // Determine old tire compound
+            const previousCompound = index === 0
+              ? strategy.startingCompound
+              : strategy.pitStops[index - 1].tireCompound;
+            const newCompound = stop.tireCompound;
+
             return (
               <div
                 key={index}
@@ -159,17 +201,32 @@ export default function TimelineStrategyBuilder({
                 >
                   <div className="text-xs font-bold text-white">P</div>
                 </div>
-                {/* Tooltip */}
+                {/* Enhanced Tooltip */}
                 <div
-                  className="absolute top-14 left-1/2 -translate-x-1/2 px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-xs pointer-events-none"
+                  className="absolute top-14 left-1/2 -translate-x-1/2 px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-xs pointer-events-none z-20"
                   style={{
                     backgroundColor: colors.bg.sidebar,
-                    border: `1px solid ${colors.border.default}`,
+                    border: `2px solid ${colors.accent.red}`,
                     color: colors.text.primary,
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.6)',
                   }}
                 >
-                  Pit Stop {index + 1} - Lap {stop.lap}
+                  <div className="font-bold mb-1" style={{ color: colors.accent.red }}>
+                    Pit Stop {index + 1}
+                  </div>
+                  <div style={{ color: colors.text.secondary }}>
+                    Lap {stop.lap}
+                  </div>
+                  <div className="mt-1 pt-1 border-t" style={{ borderColor: colors.border.default }}>
+                    <div className="flex items-center gap-2">
+                      <span style={{ color: getTireColor(previousCompound) }}>{previousCompound}</span>
+                      <span style={{ color: colors.text.muted }}>→</span>
+                      <span style={{ color: getTireColor(newCompound) }}>{newCompound}</span>
+                    </div>
+                  </div>
+                  <div className="mt-1 text-xs" style={{ color: colors.text.muted }}>
+                    ~22-24s time loss
+                  </div>
                 </div>
               </div>
             );
@@ -183,6 +240,29 @@ export default function TimelineStrategyBuilder({
             <span>Lap {Math.floor(totalLaps / 2)}</span>
             <span>Lap {totalLaps}</span>
           </div>
+        </div>
+
+        {/* Lap coverage indicator */}
+        <div className="flex items-center justify-between text-xs mt-2 pt-2 border-t" style={{ borderColor: colors.border.default }}>
+          <div style={{ color: colors.text.secondary }}>
+            Racing Laps: <span style={{ color: colors.text.primary }}>{totalLapsCovered}</span> / {totalLaps}
+            {pitLapsCount > 0 && (
+              <span className="ml-2">
+                (Pit Laps: <span style={{ color: colors.accent.red }}>{pitLapsCount}</span>)
+              </span>
+            )}
+          </div>
+          {uncoveredLaps !== 0 && (
+            <div
+              className="px-2 py-0.5 rounded text-xs font-medium"
+              style={{
+                backgroundColor: colors.accent.red + '20',
+                color: colors.accent.red,
+              }}
+            >
+              ⚠ {Math.abs(uncoveredLaps)} lap{Math.abs(uncoveredLaps) !== 1 ? 's' : ''} {uncoveredLaps > 0 ? 'missing' : 'over'}
+            </div>
+          )}
         </div>
       </div>
 

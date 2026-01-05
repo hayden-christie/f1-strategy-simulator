@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { RaceMode } from '@/lib/types';
 import { colors } from '@/lib/designSystem';
 import { F1Race } from '@/types/f1-data';
-import { Driver } from '@/lib';
+import { Driver, Team } from '@/lib/driverTeamData';
 
 interface LeftSidebarProps {
   isOpen: boolean;
@@ -17,6 +17,7 @@ interface LeftSidebarProps {
   selectedDriver: Driver | null;
   onDriverSelect: (driver: Driver | null) => void;
   drivers: Driver[];
+  teams: Record<string, Team>;
   savedPredictions: any[];
 }
 
@@ -31,6 +32,7 @@ export default function LeftSidebar({
   selectedDriver,
   onDriverSelect,
   drivers,
+  teams,
   savedPredictions,
 }: LeftSidebarProps) {
   const [raceDropdownOpen, setRaceDropdownOpen] = useState(false);
@@ -186,6 +188,50 @@ export default function LeftSidebar({
                   </svg>
                 </button>
 
+                {/* Driver Stats Display */}
+                {selectedDriver && !driverDropdownOpen && (
+                  <div
+                    className="mt-2 p-2 rounded-lg"
+                    style={{
+                      backgroundColor: colors.bg.input,
+                      border: `1px solid ${colors.border.default}`,
+                    }}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs font-semibold" style={{ color: colors.text.secondary }}>
+                        Tire Management
+                      </span>
+                      <div className="flex gap-0.5">
+                        {[...Array(10)].map((_, i) => (
+                          <div
+                            key={i}
+                            className="w-2 h-3 rounded-sm"
+                            style={{
+                              backgroundColor: i < selectedDriver.tireManagementSkill ? colors.accent.teal : colors.border.default,
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold" style={{ color: colors.text.secondary }}>
+                        Consistency
+                      </span>
+                      <div className="flex gap-0.5">
+                        {[...Array(10)].map((_, i) => (
+                          <div
+                            key={i}
+                            className="w-2 h-3 rounded-sm"
+                            style={{
+                              backgroundColor: i < selectedDriver.consistency ? colors.accent.purple : colors.border.default,
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {driverDropdownOpen && (
                   <div
                     className="absolute top-full left-0 right-0 mt-1 rounded-lg max-h-64 overflow-y-auto shadow-lg z-50"
@@ -206,26 +252,40 @@ export default function LeftSidebar({
                         color: colors.text.secondary,
                       }}
                     >
-                      <div className="text-sm font-medium">None</div>
+                      <div className="text-sm font-medium">None (Neutral)</div>
+                      <div className="text-xs opacity-75">No performance modifiers</div>
                     </button>
-                    {drivers.map((driver) => (
-                      <button
-                        key={driver.id}
-                        onClick={() => {
-                          onDriverSelect(driver);
-                          setDriverDropdownOpen(false);
-                        }}
-                        className="w-full p-2.5 text-left hover:opacity-80 transition-opacity"
-                        style={{
-                          backgroundColor: selectedDriver?.id === driver.id ? colors.accent.teal + '20' : 'transparent',
-                          borderBottom: `1px solid ${colors.border.default}`,
-                          color: colors.text.primary,
-                        }}
-                      >
-                        <div className="text-sm font-medium">{driver.fullName}</div>
-                        <div className="text-xs" style={{ color: colors.text.secondary }}>{driver.teamName}</div>
-                      </button>
-                    ))}
+                    {drivers.map((driver) => {
+                      const team = driver.teamId; // Assuming we have team data
+                      return (
+                        <button
+                          key={driver.id}
+                          onClick={() => {
+                            onDriverSelect(driver);
+                            setDriverDropdownOpen(false);
+                          }}
+                          className="w-full p-2.5 text-left hover:opacity-80 transition-opacity"
+                          style={{
+                            backgroundColor: selectedDriver?.id === driver.id ? colors.accent.teal + '20' : 'transparent',
+                            borderBottom: `1px solid ${colors.border.default}`,
+                            color: colors.text.primary,
+                          }}
+                        >
+                          <div className="flex items-center justify-between mb-1">
+                            <div className="text-sm font-medium">#{driver.number} {driver.fullName}</div>
+                            <div className="flex gap-1">
+                              <div className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: colors.accent.teal + '30', color: colors.accent.teal }}>
+                                TM {driver.tireManagementSkill}
+                              </div>
+                              <div className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: colors.accent.purple + '30', color: colors.accent.purple }}>
+                                C {driver.consistency}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-xs" style={{ color: colors.text.secondary }}>{teams[driver.teamId]?.name || 'Unknown Team'}</div>
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>

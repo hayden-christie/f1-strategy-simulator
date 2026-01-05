@@ -15,7 +15,7 @@ import { Strategy, SimulationResult, RaceConfiguration, AdvancedRaceConfig, Race
 import { simulateRace, simulateAdvancedRace, getPitLaneTimeLoss, createDefaultAdvancedConfig, hasDemoData, getDemoComparison, savePrediction, generatePredictionId, getAllPredictions } from '@/lib';
 import { getTotalLaps, getBaseLapTime } from '@/lib/raceData';
 import { generateOptimalStrategies } from '@/lib/strategyGenerator';
-import { F1_DRIVERS_2025, Driver } from '@/lib/driverTeamData';
+import { F1_DRIVERS_2025, F1_TEAMS_2025, Driver, Team } from '@/lib/driverTeamData';
 import { colors } from '@/lib/designSystem';
 import type { RacePrediction } from '@/lib/types';
 
@@ -252,6 +252,7 @@ export default function Home() {
         selectedDriver={selectedDriver}
         onDriverSelect={setSelectedDriver}
         drivers={F1_DRIVERS_2025}
+        teams={F1_TEAMS_2025}
         savedPredictions={savedPredictions}
       />
 
@@ -294,6 +295,19 @@ export default function Home() {
             <div className="flex items-center gap-2">
               {raceMode === 'PRE_RACE' && selectedRace && (
                 <>
+                  {/* Global Advanced Settings */}
+                  <button
+                    onClick={() => setAdvancedConfigOpen(!advancedConfigOpen)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all hover:scale-105 ${useAdvancedFeatures ? 'ring-2 ring-yellow-500' : ''}`}
+                    style={{
+                      backgroundColor: useAdvancedFeatures ? colors.accent.yellow : colors.bg.input,
+                      color: useAdvancedFeatures ? colors.text.inverse : colors.text.primary,
+                      border: `1px solid ${colors.border.default}`,
+                    }}
+                    title="Global race conditions (weather, safety car, etc.)"
+                  >
+                    ⚙️ {useAdvancedFeatures ? 'Advanced ON' : 'Settings'}
+                  </button>
                   <button
                     onClick={loadOptimalStrategies}
                     className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all hover:scale-105"
@@ -338,6 +352,51 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        {/* Global Advanced Configuration Panel - Below Top Bar */}
+        {raceMode === 'PRE_RACE' && selectedRace && advancedConfigOpen && (
+          <div
+            className="px-4 py-3 border-b"
+            style={{
+              backgroundColor: colors.bg.card,
+              borderColor: colors.border.default,
+            }}
+          >
+            <div className="max-w-[1200px] mx-auto">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold" style={{ color: colors.text.primary }}>
+                    Global Race Conditions
+                  </span>
+                  <span className="text-xs px-2 py-0.5 rounded" style={{ backgroundColor: colors.accent.yellow + '30', color: colors.accent.yellow }}>
+                    Applies to ALL strategies
+                  </span>
+                </div>
+                <button
+                  onClick={() => setAdvancedConfigOpen(false)}
+                  className="text-xs px-2 py-1 rounded hover:opacity-80"
+                  style={{ color: colors.text.secondary }}
+                >
+                  Close ×
+                </button>
+              </div>
+              <AdvancedConfig
+                totalLaps={getTotalLaps(selectedRace.name)}
+                config={advancedConfig}
+                onChange={(newConfig) => {
+                  setAdvancedConfig(newConfig);
+                  const hasAnyFeature =
+                    newConfig.enableWeather ||
+                    newConfig.enableSafetyCar ||
+                    newConfig.enableTireAllocation ||
+                    newConfig.enableTraffic ||
+                    newConfig.enhancedFuelEffect;
+                  setUseAdvancedFeatures(hasAnyFeature);
+                }}
+              />
+            </div>
+          </div>
+        )}
 
         {/* Main Content Area */}
         <div className="p-4 max-w-[1200px] mx-auto space-y-4">
@@ -414,51 +473,6 @@ export default function Home() {
                     setStrategies(newStrategies);
                   }}
                 />
-              </div>
-
-              {/* Advanced Configuration - Collapsible */}
-              <div
-                className="p-3 rounded-lg"
-                style={{
-                  backgroundColor: colors.bg.card,
-                  border: `1px solid ${colors.border.default}`,
-                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
-                }}
-              >
-                <button
-                  onClick={() => setAdvancedConfigOpen(!advancedConfigOpen)}
-                  className="w-full flex items-center justify-between text-sm font-semibold transition-colors hover:opacity-80"
-                  style={{ color: colors.text.primary }}
-                >
-                  <span>⚙️ Advanced Configuration</span>
-                  <svg
-                    className={`w-4 h-4 transition-transform ${advancedConfigOpen ? 'rotate-180' : ''}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-
-                {advancedConfigOpen && (
-                  <div className="mt-3 pt-3 border-t" style={{ borderColor: colors.border.default }}>
-                    <AdvancedConfig
-                      totalLaps={getTotalLaps(selectedRace.name)}
-                      config={advancedConfig}
-                      onChange={(newConfig) => {
-                        setAdvancedConfig(newConfig);
-                        const hasAnyFeature =
-                          newConfig.enableWeather ||
-                          newConfig.enableSafetyCar ||
-                          newConfig.enableTireAllocation ||
-                          newConfig.enableTraffic ||
-                          newConfig.enhancedFuelEffect;
-                        setUseAdvancedFeatures(hasAnyFeature);
-                      }}
-                    />
-                  </div>
-                )}
               </div>
 
               {/* Simulation Results */}
